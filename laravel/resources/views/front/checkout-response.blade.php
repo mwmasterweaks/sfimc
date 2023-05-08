@@ -167,9 +167,9 @@
                                 @php($SubTotal = $key->SubTotal)
                                 @php($Measurement = $key->Measurement)
 
-                                @php($ImagePath = 'public/img/products/'.$ProductID.'/'.$ProductID.'-1-'.config('app.Thumbnail').'.jpg')
+                                @php($ImagePath = 'img/products/'.$ProductID.'/'.$ProductID.'-1-'.config('app.Thumbnail').'.jpg')
                                 @if (!File::exists($ImagePath))
-                                  @php($ImagePath = 'public/img/products/product-no-image-'.config('app.Thumbnail').'.jpg')
+                                  @php($ImagePath = 'img/products/product-no-image-'.config('app.Thumbnail').'.jpg')
                                 @endif
 
                                 <tr class="cart_item first_item address_0 odd dd-product-group">

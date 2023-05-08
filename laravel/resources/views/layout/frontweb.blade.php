@@ -12,7 +12,7 @@
   @include('inc.front.frontjslink')
 
   <!--favicon-->
-  <link rel="shortcut icon" href="{{URL::to('public/img/logo.png')}}">
+  <link rel="shortcut icon" href="{{URL::to('img/logo.png')}}">
 </head>
 <body>
 
@@ -101,7 +101,7 @@
     width:200px;
     height:200px;
     background-color:#fff;
-    background-image:url('{{ URL::to('public/img/loader.gif') }}');
+    background-image:url('{{ URL::to('img/loader.gif') }}');
     background-size: 200px 200px;
     background-repeat:no-repeat;
     background-position:center;

@@ -3,46 +3,46 @@
     $.widget.bridge('uibutton', $.ui.button);
   </script>
   <!-- Bootstrap 3.3.7 -->
-  <script src="{{URL::to('public/admin/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
   <!-- Select2 -->
-  <script src="{{URL::to('public/admin/bower_components/select2/dist/js/select2.full.min.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/select2/dist/js/select2.full.min.js') }}"></script>
 
   <!-- Morris.js charts -->
-  <script src="{{URL::to('public/admin/bower_components/raphael/raphael.min.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/raphael/raphael.min.js') }}"></script>
   <!--
-  <script src="{{URL::to('public/admin/bower_components/morris.js/morris.min.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/morris.js/morris.min.js') }}"></script>
   -->
 
   <!-- Sparkline -->
-  <script src="{{URL::to('public/admin/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js') }}"></script>
   <!-- jvectormap -->
-  <script src="{{URL::to('public/admin/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
-  <script src="{{URL::to('public/admin/plugins/jvectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
+  <script src="{{URL::to('admin/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
+  <script src="{{URL::to('admin/plugins/jvectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
   <!-- jQuery Knob Chart -->
-  <script src="{{URL::to('public/admin/bower_components/jquery-knob/dist/jquery.knob.min.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/jquery-knob/dist/jquery.knob.min.js') }}"></script>
   <!-- daterangepicker -->
-  <script src="{{URL::to('public/admin/bower_components/moment/min/moment.min.js') }}"></script>
-  <script src="{{URL::to('public/admin/bower_components/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/moment/min/moment.min.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
   <!-- datepicker -->
-  <script src="{{URL::to('public/admin/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
   <!-- Bootstrap WYSIHTML5 -->
-  <script src="{{URL::to('public/admin/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
+  <script src="{{URL::to('admin/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
   <!-- DataTables -->
-  <script src="{{URL::to('public/admin/bower_components/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-  <script src="{{URL::to('public/admin/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
   <!-- Slimscroll -->
-  <script src="{{URL::to('public/admin/bower_components/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/jquery-slimscroll/jquery.slimscroll.min.js') }}"></script>
   <!-- FastClick -->
-  <script src="{{URL::to('public/admin/bower_components/fastclick/lib/fastclick.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/fastclick/lib/fastclick.js') }}"></script>
   <!-- ChartJS -->
-  <script src="{{URL::to('public/admin/bower_components/chart.js/Chart.js') }}"></script>
+  <script src="{{URL::to('admin/bower_components/chart.js/Chart.js') }}"></script>
 
   <!-- getorgchart -->
-  <script src="{{ URL::to('public/admin/css/getorgchart/js/getorgchart.js') }}" type="text/javascript"></script>
+  <script src="{{ URL::to('admin/css/getorgchart/js/getorgchart.js') }}" type="text/javascript"></script>
 
   <!-- AdminLTE App -->
-  <script src="{{URL::to('public/admin/dist/js/adminlte.min.js') }}"></script>
+  <script src="{{URL::to('admin/dist/js/adminlte.min.js') }}"></script>
 
   <!-- Tiny MCE -->
   <script src="https://cdn.tiny.cloud/1/1tkg4r3githfe96sp1bdcc33hlgy1574gd53cbul5b0yalth/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
@@ -133,7 +133,7 @@
     function buttonOneClick(vID, vLabel, vIsDisabled){
       var btn = $("#"+vID);
       if(vIsDisabled){
-        btn.html('<img src="{{ URL::to('public/img/button-loader.gif') }}" style="max-height:15px;">');
+        btn.html('<img src="{{ URL::to('img/button-loader.gif') }}" style="max-height:15px;">');
         btn.attr("disabled", true);
       }else{
         btn.html(vLabel);
@@ -144,7 +144,7 @@
     $(function() {
       $("form").submit(function() {
                 var btn = $(".one-click");
-                btn.html('<img src="{{ URL::to('public/img/button-loader.gif') }}" style="max-height:15px;">');
+                btn.html('<img src="{{ URL::to('img/button-loader.gif') }}" style="max-height:15px;">');
                 btn.attr("disabled", true);
       })
 

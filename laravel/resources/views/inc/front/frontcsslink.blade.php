@@ -1,6 +1,6 @@
-  <link rel="stylesheet" href="{{URL::to('public/front/css/style.css')}}">
-  <link rel="stylesheet" href="{{URL::to('public/front/css/responsive.css')}}">
-  <link rel="stylesheet" href="{{URL::to('public/front/fonts/flaticon.css')}}" />
+  <link rel="stylesheet" href="{{URL::to('front/css/style.css')}}">
+  <link rel="stylesheet" href="{{URL::to('front/css/responsive.css')}}">
+  <link rel="stylesheet" href="{{URL::to('front/fonts/flaticon.css')}}" />
 
   <script type="text/javascript">
       

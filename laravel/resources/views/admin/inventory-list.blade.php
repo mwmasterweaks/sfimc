@@ -429,7 +429,7 @@
 	                    " </div> " ;
 
 
-			tdProductPhoto = "<img src='public/img/products/" + vData.ProductID + "/" + vData.ProductID + "-1-{{ config('app.Thumbnail') }}.jpg' style='max-width:50px;'>";
+			tdProductPhoto = "<img src='img/products/" + vData.ProductID + "/" + vData.ProductID + "-1-{{ config('app.Thumbnail') }}.jpg' style='max-width:50px;'>";
 
 			tdCenter = "<span style='font-weight:normal;'>" + vData.Center + "</span>";
 

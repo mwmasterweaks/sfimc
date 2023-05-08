@@ -45,9 +45,9 @@
           @php($Price = $oi->Price)
           @php($SubTotal = $oi->SubTotal)
 
-          @php($ImagePath = 'public/img/products/'.$ProductID.'/'.$ProductID.'-1-'.config('app.Thumbnail').'.jpg')
+          @php($ImagePath = 'img/products/'.$ProductID.'/'.$ProductID.'-1-'.config('app.Thumbnail').'.jpg')
           @if (!File::exists($ImagePath))
-            @php($ImagePath = 'public/img/products/product-no-image-'.config('app.Thumbnail').'.jpg')
+            @php($ImagePath = 'img/products/product-no-image-'.config('app.Thumbnail').'.jpg')
           @endif
 
           <tr>

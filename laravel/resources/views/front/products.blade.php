@@ -3,7 +3,7 @@
 
   <!--Page Title-->
   <section class="bredcrumb">
-    <div class="bg-image text-center" style="background-image: url('public/img/products-banner.jpg');">
+    <div class="bg-image text-center" style="background-image: url('img/products-banner.jpg');">
       <h1>Our Products</h1>
     </div>
     <div class="">
@@ -50,7 +50,7 @@
             <div class="single-item">
               <div class="img-holder">
                 <a href="{{ route('product-detail').'?ProductName='.$inv->ProductName}}">
-                  <img src="{{URL::to('public/img/products/'.$inv->ProductID.'/'.$inv->ProductID.'-1-300x300.jpg')}}" alt="{{ $inv->ProductName }}"/>
+                  <img src="{{URL::to('img/products/'.$inv->ProductID.'/'.$inv->ProductID.'-1-300x300.jpg')}}" alt="{{ $inv->ProductName }}"/>
                 </a>
               </div>
               <div class="overlay">

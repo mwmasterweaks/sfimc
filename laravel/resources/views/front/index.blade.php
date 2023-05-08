@@ -6,19 +6,19 @@
       <div id="slider1" class="rev_slider"  data-version="5.0">
         <ul>
           <li data-transition="fade">
-            <img src="{{URL::to('public/img/slide1.jpg')}}"  alt="" width="1920" height="700" data-bgposition="top center" data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="1" >
+            <img src="{{URL::to('img/slide1.jpg')}}"  alt="" width="1920" height="700" data-bgposition="top center" data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="1" >
           </li>
           <li data-transition="fade">
-            <img src="{{URL::to('public/img/slide2.jpg')}}"  alt="" width="1920" height="700" data-bgposition="top center" data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="1" >
+            <img src="{{URL::to('img/slide2.jpg')}}"  alt="" width="1920" height="700" data-bgposition="top center" data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="1" >
           </li>
           <li data-transition="fade">
-            <img src="{{URL::to('public/img/slide3.jpg')}}"  alt="" width="1920" height="700" data-bgposition="top center" data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="1" >
+            <img src="{{URL::to('img/slide3.jpg')}}"  alt="" width="1920" height="700" data-bgposition="top center" data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="1" >
           </li>
           <li data-transition="fade">
-            <img src="{{URL::to('public/img/slide4.jpg')}}"  alt="" width="1920" height="700" data-bgposition="top center" data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="1" >
+            <img src="{{URL::to('img/slide4.jpg')}}"  alt="" width="1920" height="700" data-bgposition="top center" data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="1" >
           </li>
           <li data-transition="fade">
-            <img src="{{URL::to('public/img/slide5.jpg')}}"  alt="" width="1920" height="700" data-bgposition="top center" data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="1" >
+            <img src="{{URL::to('img/slide5.jpg')}}"  alt="" width="1920" height="700" data-bgposition="top center" data-bgfit="cover" data-bgrepeat="no-repeat" data-bgparallax="1" >
           </li>
 
         </ul>
@@ -40,7 +40,7 @@
               <div class="service-left-bg"></div>
               <div class="service-icon">
                 <a href="{{ route('products') }}">
-                  <img src="{{URL::to('public/img/cosmetic-products.jpg')}}" alt="Cosmetic Products">
+                  <img src="{{URL::to('img/cosmetic-products.jpg')}}" alt="Cosmetic Products">
                 </a>
               </div>
               <div class="service-text">
@@ -56,7 +56,7 @@
               <div class="service-left-bg"></div>
               <div class="service-icon">
                 <a href="{{ route('products') }}">
-                  <img src="{{URL::to('public/img/oil-products.jpg')}}" alt="Massage Oil">
+                  <img src="{{URL::to('img/oil-products.jpg')}}" alt="Massage Oil">
                 </a>
               </div>
               <div class="service-text">
@@ -72,7 +72,7 @@
               <div class="service-left-bg"></div>
               <div class="service-icon">
                 <a href="{{ route('products') }}">
-                  <img src="{{URL::to('public/img/soap-products.jpg')}}" alt="Beauty Soap">
+                  <img src="{{URL::to('img/soap-products.jpg')}}" alt="Beauty Soap">
                 </a>
               </div>
               <div class="service-text">
@@ -88,7 +88,7 @@
               <div class="service-left-bg"></div>
               <div class="service-icon">
                 <a href="{{ route('products') }}">
-                  <img src="{{URL::to('public/img/top-product1.jpg')}}" alt="Millionaires Vapor Rub">
+                  <img src="{{URL::to('img/top-product1.jpg')}}" alt="Millionaires Vapor Rub">
                 </a>
               </div>
               <div class="service-text">
@@ -104,7 +104,7 @@
               <div class="service-left-bg"></div>
               <div class="service-icon">
                 <a href="{{ route('products') }}">
-                  <img src="{{URL::to('public/img/top-product2.jpg')}}" alt="Millionaires Massage Oil">
+                  <img src="{{URL::to('img/top-product2.jpg')}}" alt="Millionaires Massage Oil">
                 </a>
               </div>
               <div class="service-text">
@@ -120,7 +120,7 @@
               <div class="service-left-bg"></div>
               <div class="service-icon">
                 <a href="{{ route('products') }}">
-                  <img src="{{URL::to('public/img/top-product3.jpg')}}" alt="Millionaires Miracle Oil">
+                  <img src="{{URL::to('img/top-product3.jpg')}}" alt="Millionaires Miracle Oil">
                 </a>
               </div>
               <div class="service-text">
@@ -148,7 +148,7 @@
             <div class="col-md-6 col-xs-12">
               <div class="item">
                 <figure class="image-box">
-                  <img src="{{URL::to('public/img/who-we-are.jpg')}}" alt="" class="img-responsive">
+                  <img src="{{URL::to('img/who-we-are.jpg')}}" alt="" class="img-responsive">
                 </figure>
               </div>
             </div>
@@ -177,7 +177,7 @@
             <div class="col-md-4">
               <div class="single-features">
                 <div class="media">
-                  <img class="mr-3" src="{{URL::to('public/img/leader.png')}}" alt=" image">
+                  <img class="mr-3" src="{{URL::to('img/leader.png')}}" alt=" image">
                   <div class="media-body">
                   <h5 class="mt-0">Business with Thought Leadership</h5>
                   </div>
@@ -187,7 +187,7 @@
             <div class="col-md-4">
               <div class="single-features">
                 <div class="media">
-                  <img class="mr-3" src="{{URL::to('public/img/world-map.png')}}" alt="image">
+                  <img class="mr-3" src="{{URL::to('img/world-map.png')}}" alt="image">
                   <div class="media-body">
                   <h5 class="mt-0">Global consumer insights for business</h5>
                   </div>
@@ -197,7 +197,7 @@
             <div class="col-md-4">
               <div class="single-features">
                 <div class="media">
-                  <img class="mr-3" src="{{URL::to('public/img/money.png')}}" alt="Generic placeholder image">
+                  <img class="mr-3" src="{{URL::to('img/money.png')}}" alt="Generic placeholder image">
                   <div class="media-body">
                   <h5 class="mt-0">Segment of focused investors </h5>
                   </div>
@@ -258,7 +258,7 @@
               <div class="news-post-image">
                 <div class="news-overlay"></div>  
                 <a href="{{ route('news-event-detail').'?Title='.$newsevents->SlugTitle }}">
-                  <img src="{{URL::to('public/img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}" class="img-responsive">
+                  <img src="{{URL::to('img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}" class="img-responsive">
                 </a>
               </div>
               <div class="news-post-text" style="min-height: 200px;">
@@ -284,7 +284,7 @@
       </div>  
     </section>
 
-    <section class="get-quote-section" style=" background-image:url(public/img/getquote-bg-img.jpg);">
+    <section class="get-quote-section" style=" background-image:url(img/getquote-bg-img.jpg);">
         <div class="container">
             <div class="row clearfix">
                   
@@ -326,7 +326,7 @@
               
               <!--Image Column-->
               <div class="image-column col-lg-5 col-md-4 col-sm-12 col-xs-12">
-              <figure class="image"><img src="{{URL::to('public/img/contact-us.png')}}" alt=""></figure>
+              <figure class="image"><img src="{{URL::to('img/contact-us.png')}}" alt=""></figure>
               </div>
               
           </div>

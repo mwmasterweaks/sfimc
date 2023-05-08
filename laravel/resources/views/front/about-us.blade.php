@@ -31,7 +31,7 @@
             <div class="col-md-5 col-sm-10 col-xs-12">
               <div class="item">
                 <figure class="image-box">
-                  <img src="{{URL::to('public/img/who-we-are.jpg')}}" alt="" class="img-responsive">
+                  <img src="{{URL::to('img/who-we-are.jpg')}}" alt="" class="img-responsive">
                 </figure>
               </div>
             </div>
@@ -85,21 +85,21 @@
               <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 5px;">
                  <div class="inner-box">
                     <div class="icon-box">
-                       <img src="{{URL::to('public/img/award1.jpg')}}" alt="2019 Golden Globe Awards For Business Excellence and Filipino Achiever">
+                       <img src="{{URL::to('img/award1.jpg')}}" alt="2019 Golden Globe Awards For Business Excellence and Filipino Achiever">
                     </div>
                  </div>
               </div>
               <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 5px;">
                  <div class="inner-box">
                     <div class="icon-box">
-                       <img src="{{URL::to('public/img/award2.jpg')}}" alt="38th People's Choice Excellence Awards 2018">
+                       <img src="{{URL::to('img/award2.jpg')}}" alt="38th People's Choice Excellence Awards 2018">
                     </div>
                  </div>
               </div>
               <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 5px;">
                  <div class="inner-box">
                     <div class="icon-box">
-                       <img src="{{URL::to('public/img/award3.jpg')}}" alt="29th Asia Pacific Excellence Awards 2017">
+                       <img src="{{URL::to('img/award3.jpg')}}" alt="29th Asia Pacific Excellence Awards 2017">
                     </div>
                  </div>
               </div>

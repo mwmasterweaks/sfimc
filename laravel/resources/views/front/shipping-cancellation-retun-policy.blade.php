@@ -3,7 +3,7 @@
 
   <!--Page Title-->
   <section class="bredcrumb">
-    <div class="bg-image text-center" style="background-image: url('public/img/products-banner.jpg');">
+    <div class="bg-image text-center" style="background-image: url('img/products-banner.jpg');">
       <h1>Shipping, Cancellation and Return Policy</h1>
     </div>
     <div class="">

@@ -30,7 +30,7 @@
 
     <!--Page Title-->
     <section class="bredcrumb">
-      <div class="bg-image text-center" style="background-image: url('public/img/products-banner.jpg');">
+      <div class="bg-image text-center" style="background-image: url('img/products-banner.jpg');">
         <h1>Checkout</h1>
       </div>
       <div class="">
@@ -176,9 +176,9 @@
                                   @php($Measurement = $key->Measurement)
                                   @php($Remarks = $key->Remarks)
 
-                                  @php($ImagePath = 'public/img/products/'.$ProductID.'/'.$ProductID.'-1-'.config('app.Thumbnail').'.jpg')
+                                  @php($ImagePath = 'img/products/'.$ProductID.'/'.$ProductID.'-1-'.config('app.Thumbnail').'.jpg')
                                   @if (!File::exists($ImagePath))
-                                    @php($ImagePath = 'public/img/products/product-no-image-'.config('app.Thumbnail').'.jpg')
+                                    @php($ImagePath = 'img/products/product-no-image-'.config('app.Thumbnail').'.jpg')
                                   @endif
 
                                   <tr class="cart_item first_item address_0 odd dd-product-group">

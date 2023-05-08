@@ -14,7 +14,7 @@
 
   <!--Page Title-->
   <section class="bredcrumb">
-    <div class="bg-image text-center" style="background-image: url('public/img/products-banner.jpg');">
+    <div class="bg-image text-center" style="background-image: url('img/products-banner.jpg');">
       <h1>Product Details</h1>
     </div>
     <div class="">
@@ -61,7 +61,7 @@
             <div class="col-md-5 col-sm-12 col-xs-12">
               <div class="single-item">
                 <div class="img-holder">            
-                  <img src="{{URL::to('public/img/products/'.$ProductID.'/'.$ProductID.'-1-300x300.jpg')}}" alt="{{ $ProductName }}"/>
+                  <img src="{{URL::to('img/products/'.$ProductID.'/'.$ProductID.'-1-300x300.jpg')}}" alt="{{ $ProductName }}"/>
                 </div>
               </div>
             </div>

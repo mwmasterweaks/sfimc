@@ -3,7 +3,7 @@
 
   <!--Page Title-->
   <section class="bredcrumb">
-    <div class="bg-image text-center" style="background-image: url('public/img/products-banner.jpg');">
+    <div class="bg-image text-center" style="background-image: url('img/products-banner.jpg');">
       <h1>News & Events</h1>
     </div>
     <div class="">
@@ -23,7 +23,7 @@
                           <div class="news-post-image">
                             <div class="news-overlay"></div>  
                             <a href="{{ route('news-event-detail').'?Title='.$newsevents->SlugTitle }}">
-                              <img src="{{URL::to('public/img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}" class="img-responsive">
+                              <img src="{{URL::to('img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}" class="img-responsive">
                             </a>
                           </div>
                           <div class="news-post-text" style="min-height: 200px;">

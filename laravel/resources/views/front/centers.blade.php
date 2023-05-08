@@ -3,7 +3,7 @@
 
   <!--Page Title-->
   <section class="bredcrumb">
-    <div class="bg-image text-center" style="background-image: url('public/img/products-banner.jpg');">
+    <div class="bg-image text-center" style="background-image: url('img/products-banner.jpg');">
       <h1>Centers</h1>
     </div>
     <div class="">
@@ -27,7 +27,7 @@
               @if($ctr->CenterID == 1)
                 <div class="news-category"><a href="#">MAIN</a></div> 
               @endif
-              <img src="{{ URL::to('public/img/logo.png') }}" alt="{{ $ctr->Center }}" class="img-responsive" style="padding: 20px;">
+              <img src="{{ URL::to('img/logo.png') }}" alt="{{ $ctr->Center }}" class="img-responsive" style="padding: 20px;">
             </div>
             <div class="news-post-text">
               <h3>{{ $ctr->Center }}</h3>

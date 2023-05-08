@@ -4,7 +4,7 @@
           <td>
             <div style='margin:0 auto;background:#fff;padding:10px;'>
               <center>
-                <img style='margin:0 auto;width:300px;' src="{{URL::to('public/img/logo-circle.jpg')}}" >
+                <img style='margin:0 auto;width:300px;' src="{{URL::to('img/logo-circle.jpg')}}" >
               </center>
 
               <div style='clear:both;'></div>

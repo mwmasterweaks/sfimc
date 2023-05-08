@@ -264,7 +264,7 @@
                         <br>
                         <div class="file-preview-frame">
                             <!--Product Image Display Here  -->
-                            <img id="output" src="{{ URL::to('public/img/products/product-no-image-300x300.jpg') }}" style="max-width: 500px;" />
+                            <img id="output" src="{{ URL::to('img/products/product-no-image-300x300.jpg') }}" style="max-width: 500px;" />
                        	</div>
                    	</div>
             	</div>
@@ -395,7 +395,7 @@
 	                        " </ul> " +
 	                    " </div> " ;
 
-			tdProductPhoto = "<img src='public/img/products/" + vData.ProductID + "/" + vData.ProductID + "-1-{{ config('app.Thumbnail') }}.jpg' style='max-width:50px;'>";
+			tdProductPhoto = "<img src='img/products/" + vData.ProductID + "/" + vData.ProductID + "-1-{{ config('app.Thumbnail') }}.jpg' style='max-width:50px;'>";
 
 			tdProductCode = "<span style='font-weight:normal;'>" + vData.ProductCode + "</span>";
 			tdProductName = "<span style='font-weight:normal;'>" + vData.ProductName + "</span>";

@@ -9,7 +9,7 @@
    ?>
    
     <?php 
-        $PicPath = "/public/img/members/";
+        $PicPath = "/img/members/";
 
         $ParentID = 1;
         $ParentEntryID = 0;
@@ -136,7 +136,7 @@
                                 $ProfilePic = $PicPath.$PARENTMID.".jpg";
                             ?>
 
-                            @if(!File::exists('public/img/members/'.$TOP->EntryID.'.jpg'))
+                            @if(!File::exists('img/members/'.$TOP->EntryID.'.jpg'))
                                 <?php 
                                     $ProfilePic = $PicPath."member-no-image.png"; 
                                 ?>
@@ -179,7 +179,7 @@
                             <?php
                             $ProfilePic = $PicPath.$child->EntryID.'.jpg';
                             ?>
-                            @if(!File::exists('public/img/members/'.$child->EntryID.'.jpg'))
+                            @if(!File::exists('img/members/'.$child->EntryID.'.jpg'))
                                 <?php
                                     $ProfilePic = $PicPath."member-no-image.png"; 
                                 ?>

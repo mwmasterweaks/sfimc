@@ -36,10 +36,10 @@
 	            <!-- Add the bg color to the header using any of the bg-* classes -->
 	            <div class="widget-user-header" style="background-color: #dfb407;">
 	              <div class="widget-user-image">
-                    @if(File::exists('public/img/members/'.Session('MEMBER_ENTRY_ID').'.jpg'))
-		                <img id="imgMember" class="img-circle" src="{{ URL::to('public/img/members/'.Session('MEMBER_ENTRY_ID').'.jpg') }}" alt="Member Picture" onclick="UploadImage()">
+                    @if(File::exists('img/members/'.Session('MEMBER_ENTRY_ID').'.jpg'))
+		                <img id="imgMember" class="img-circle" src="{{ URL::to('img/members/'.Session('MEMBER_ENTRY_ID').'.jpg') }}" alt="Member Picture" onclick="UploadImage()">
                     @else
-		                <img id="imgMember" class="img-circle" src="{{ URL::to('public/img/members/member-no-image.png') }}" alt="Member Picture"  onclick="UploadImage()">
+		                <img id="imgMember" class="img-circle" src="{{ URL::to('img/members/member-no-image.png') }}" alt="Member Picture"  onclick="UploadImage()">
                     @endif
 	              </div>
 	              <!-- /.widget-user-image -->
@@ -203,7 +203,7 @@
                         <br>
                         <div class="file-preview-frame">
                             <!--Product Image Display Here  -->
-                            <img id="output" src="{{ URL::to('public/img/members/member-no-image.png') }}" style="max-width: 500px;" />
+                            <img id="output" src="{{ URL::to('img/members/member-no-image.png') }}" style="max-width: 500px;" />
                        	</div>
                    	</div>
             	</div>

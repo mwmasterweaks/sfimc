@@ -3,7 +3,7 @@
 
   <!--Page Title-->
   <section class="bredcrumb">
-    <div class="bg-image text-center" style="background-image: url('public/img/products-banner.jpg');">
+    <div class="bg-image text-center" style="background-image: url('img/products-banner.jpg');">
       <h1>News & Event Detail</h1>
     </div>
     <div class="">
@@ -41,7 +41,7 @@
                     <section class="blog-container news">  
                         <div class="news-post">
                             <div class="news-post-image">
-                                <img src="{{URL::to('public/img/newsevents/'.$RecordID.'.jpg')}}" alt="{{ $Title }}" alt="Image" class="img-responsive">
+                                <img src="{{URL::to('img/newsevents/'.$RecordID.'.jpg')}}" alt="{{ $Title }}" alt="Image" class="img-responsive">
                             </div>
                             <div class="news-post-text">
                                 <h3><a href="#">{{ $Title }}</a></h3>
@@ -74,7 +74,7 @@
                                         <li>
                                             <div class="img-holder">
                                                 <a href="{{ route('news-event-detail').'?Title='.$newsevents->SlugTitle }}">
-                                                    <img src="{{URL::to('public/img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}">
+                                                    <img src="{{URL::to('img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}">
                                                 </a>
                                                 <div class="overlay-style-one">
                                                     <div class="box">
