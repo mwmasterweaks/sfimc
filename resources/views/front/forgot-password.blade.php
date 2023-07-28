@@ -1,10 +1,12 @@
 
 
+
+
 <!DOCTYPE html>
 <html lang="zxx">
 
 <head>
-    <title>Member Login | SUCCESS FORMULA INTL</title>
+    <title>Forgot Password | SUCCESS FORMULA INTL</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <!-- External CSS libraries -->
@@ -68,10 +70,10 @@
                         <span style="--i:4;font-size:25px">'L</span>
                        
                     </div>
-                    <p>Please click on login to continue, username & password required.</p>
+                    <p>Please click on submit to continue, email address & username required.</p>
                       <div class="admin-sidebar-info">
                                   <ul>
-                                      <li><a href="{{ URL::route('home') }}" style="color:green;">Go To Main Site</a></li>
+                                      <li><a href="{{ URL::route('member-login') }}" style="color:green;">Go Back To Login</a></li>
                                   </ul>
                                 </div>
                 </div>
@@ -86,10 +88,11 @@
                             <img src="{{ URL::to('admin/css/assets/img/logos/logo.png') }}" alt="logo" style = "width:120px;height:120px">
                         </a>
                     </div>
-                    <h3 style = "color:#fff" >Member Login</h3>
+                    <h3 style = "color:#fff" >Forgot Password</h3>
                     <div class="login-inner-form">
-                        <form action="{{ route('do-member-login') }}" method="post">
-                             @if(session('Success_Msg'))
+                        <form action="{{ route('do-forgot-password') }}" method="post">
+                             @csrf
+              @if(session('Success_Msg'))
                <div class="alert alert-success alert-dismissible" style="border-left:3px solid #3c763d;">
                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                     {{session('Success_Msg')}}
@@ -105,30 +108,19 @@
                             <div class="form-group clearfix">
                                 <label for="first_field" class="form-label" style = "color:#fff"></label>
                                 <div class="form-box">
-                                    <input name="EntryCode" type="text" class="form-control" id="" placeholder="IBO No." aria-label="Email Address">
-                                    <i class="flaticon-user"></i>
+                                    <input name="EmailAddress" type="text" class="form-control" id="" placeholder="Email Address" aria-label="Email Address">
+                                    <i class="flaticon-mail"></i>
                                 </div>
                             </div>
                             <div class="form-group clearfix">
-                                <label for="second_field" class="form-label"style = "color:#fff"></label>
+                                <label for="first_field" class="form-label" style = "color:#fff"></label>
                                 <div class="form-box">
-                                    <input name="UserPassword" type="password" style = "color:#121212" id="inputStylePassword" class="form-control" autocomplete="off" id="second_field" placeholder="Password" aria-label="Password">
-                                    <i class="flaticon-password"></i>
-                                </div>
-                            </div>
-                            <div class="checkbox form-group clearfix">
-                                <div class="form-check float-start">
-                                    <input class="form-check-input" type="checkbox" id="rememberme" onclick="myFunction()">
-                                    <label class="form-check-label" for="rememberme">
-                                       Show Password
-                                    </label>
-                                </div>
-                                <div class="form-group clearfix mb-0" style="float: right;">
-                                    <a href="{{ URL::route('forgot-password') }}">Forgot Password?</a>
+                                    <input name="MemberNo" type="text" class="form-control" id="" placeholder="IBO No." aria-label="Email Address">
+                                    <i class="flaticon-user"></i>
                                 </div>
                             </div>
                             <div class="form-group clearfix mb-0">
-                                <button type="submit" class="btn btn-primary btn-lg btn-theme">Login</button>
+                                <button type="submit" class="btn btn-primary btn-lg btn-theme">Submit</button>
                             </div>
                         </form>
                     
@@ -152,25 +144,25 @@
     <script type="text/javascript">
 
 
-$(document).ready(function(){
+// $(document).ready(function(){
 
-  $("#divLogin").show();
+//   $("#divLogin").show();
 
-    $("#btnLogin").click(function(){
-        $("#divLogin").slideToggle();
-        $("#divLogin").show();
-    });
+//     $("#btnLogin").click(function(){
+//         $("#divLogin").slideToggle();
+//         $("#divLogin").show();
+//     });
 
-});
+// });
 
-function myFunction() {
-    var x = document.getElementById("inputStylePassword");
-    if (x.type === "password") {
-        x.type = "text";
-    } else {
-        x.type = "password";
-    }
-}
+// function myFunction() {
+//     var x = document.getElementById("inputStylePassword");
+//     if (x.type === "password") {
+//         x.type = "text";
+//     } else {
+//         x.type = "password";
+//     }
+// }
 
 
 </script>
