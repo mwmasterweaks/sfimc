@@ -77,6 +77,14 @@ class FrontController extends Controller {
 
     }
 
+    public function showForgotPassword(){
+
+        $data['Page'] = 'forgot-password';
+        $data['Token'] = csrf_token();
+
+        return View::make('front/forgot-password');
+    }
+
     public function showProducts(Request $request){
 
         $data['Page'] = 'products';
