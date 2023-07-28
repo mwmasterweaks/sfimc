@@ -8,6 +8,11 @@ Route::get('/home', [
     'as' => 'home'
 ]);
 
+Route::get('/forgot-password', [
+    'uses' => 'FrontController@showForgotPassword',
+    'as' => 'forgot-password'
+]);
+
 Route::get('/products', [
     'uses' => 'FrontController@showProducts',
     'as' => 'products'
@@ -929,6 +934,12 @@ Route::get('/member-order-history', [
 Route::get('/member-vouchers', [
     'uses' => 'MemberController@showMemberVouchers',
     'as' => 'member-vouchers'
+]);
+
+//MAIL =======================================================================================================================================
+Route::post('/do-forgot-password', [
+    'uses' => 'MailController@doForgetPassword',
+    'as' => 'do-forgot-password'
 ]);
 
 //SYSTEM SETTINGS =======================================================================================================================================

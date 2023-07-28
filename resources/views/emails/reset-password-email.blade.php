@@ -4,7 +4,7 @@
           <td>
             <div style='margin:0 auto;background:#fff;padding:10px;'>
               <center>
-                <img style='margin:0 auto;width:300px;' src="{{URL::to('img/logo-circle.jpg')}}" >
+                <img style='margin:0 auto;width:300px;' src="https://sfimc.org/public/img/logo-head.png" >
               </center>
 
               <div style='clear:both;'></div>
