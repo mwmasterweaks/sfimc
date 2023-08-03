@@ -58,7 +58,7 @@ class EWalletWithdrawal extends Model
             COALESCE((SELECT COALESCE(RunningBalance,0) as RunningBalance
                         FROM ewalletledger
                         WHERE MemberID = wdraw.WithdrawByMemberID
-                        ORDER BY DateTimeCreated DESC
+                        ORDER BY LedgerID DESC
                         LIMIT 1
                         )
                       ,0) as CurrentEWalletBalance,
@@ -173,7 +173,7 @@ class EWalletWithdrawal extends Model
             COALESCE((SELECT COALESCE(RunningBalance,0) as RunningBalance
                         FROM ewalletledger
                         WHERE MemberID = wdraw.WithdrawByMemberID
-                        ORDER BY DateTimeCreated DESC
+                        ORDER BY LedgerID DESC
                         LIMIT 1
                         )
                       ,0) as CurrentEWalletBalance,
@@ -254,7 +254,7 @@ class EWalletWithdrawal extends Model
             COALESCE((SELECT COALESCE(RunningBalance,0) as RunningBalance
                         FROM ewalletledger
                         WHERE MemberID = wdraw.WithdrawByMemberID
-                        ORDER BY DateTimeCreated DESC
+                        ORDER BY LedgerID DESC
                         LIMIT 1
                         )
                       ,0) as CurrentEWalletBalance,
@@ -337,7 +337,7 @@ class EWalletWithdrawal extends Model
             COALESCE((SELECT COALESCE(RunningBalance,0) as RunningBalance
                         FROM ewalletledger
                         WHERE MemberID = wdraw.WithdrawByMemberID
-                        ORDER BY DateTimeCreated DESC
+                        ORDER BY LedgerID DESC
                         LIMIT 1
                         )
                       ,0) as CurrentEWalletBalance,
@@ -693,6 +693,7 @@ class EWalletWithdrawal extends Model
 
   public function doCancelEWalletWithdrawal($data)
   {
+    $Misc  = new Misc();
 
     $TODAY = date("Y-m-d H:i:s");
 

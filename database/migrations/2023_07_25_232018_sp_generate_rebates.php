@@ -16,7 +16,7 @@ class SpGenerateRebates extends Migration
     {
         $sql = "
         DELIMITER $$
-        CREATE DEFINER=`c4_trashcan`@`localhost` PROCEDURE `spGenerateRebates`(IN `recCurrentDateTime` DATETIME)
+        CREATE PROCEDURE `spGenerateRebates`(IN `recCurrentDateTime` DATETIME)
         BEGIN
             DECLARE curDateTime DATETIME DEFAULT NOW();
             DECLARE REBATES_COMPLAN_ID BIGINT(13) DEFAULT 4;
@@ -122,7 +122,7 @@ class SpGenerateRebates extends Migration
             AND MONTH(cutoff.EndDate) = intCutOffMonth
             AND YEAR(cutoff.EndDate) = intCutOffYear;
             
-                SET intCutOffMonth = MONTH(recCurrentDateTime) - 1;
+            SET intCutOffMonth = MONTH(recCurrentDateTime) - 1;
             if(intCutOffMonth = 0) then
                 SET intCutOffMonth = 12;
             end if;
@@ -132,39 +132,37 @@ class SpGenerateRebates extends Migration
                 SET intCutOffYear = intCutOffYear - 1;
             end if;
 
-                UPDATE memberentrycutoff SET
-                AcquiredByEntryID = NULL,
-                IsRebatesGenerated = 0,
-                MaintainingBalance = COALESCE((SELECT packagerebates.`RebatesMaintainingBal`
-                                    FROM `memberentry` 
-                                    INNER JOIN `packagerebates` ON (memberentry.`PackageID` = packagerebates.PackageID)
-                                    WHERE memberentry.EntryID = memberentrycutoff.MemberEntryID
-                                    LIMIT 1),0)
+            UPDATE memberentrycutoff SET
+            AcquiredByEntryID = NULL,
+            IsRebatesGenerated = 0,
+            MaintainingBalance = COALESCE((SELECT packagerebates.`RebatesMaintainingBal`
+                                FROM `memberentry` 
+                                INNER JOIN `packagerebates` ON (memberentry.`PackageID` = packagerebates.PackageID)
+                                WHERE memberentry.EntryID = memberentrycutoff.MemberEntryID
+                                LIMIT 1),0)
             WHERE MONTH(EndDate) = intCutOffMonth
             AND YEAR(EndDate) = intCutOffYear;
             
-                UPDATE memberentrycutoff 
-            SET
-                AcquiredByEntryID = MemberEntryID
+            UPDATE memberentrycutoff 
+            SET AcquiredByEntryID = MemberEntryID
             WHERE `TotalRebatableValue` >= `MaintainingBalance`
             AND MONTH(EndDate) = intCutOffMonth
             AND YEAR(EndDate) = intCutOffYear;
 
-                UPDATE memberentrycutoff 
-            SET
-                AcquiredByEntryID = NULL
+            UPDATE memberentrycutoff 
+            SET AcquiredByEntryID = NULL
             WHERE `TotalRebatableValue` < `MaintainingBalance`
             AND MONTH(EndDate) = intCutOffMonth
             AND YEAR(EndDate) = intCutOffYear;
 
-                DROP TEMPORARY TABLE IF EXISTS tblTempCollection;
+            DROP TEMPORARY TABLE IF EXISTS tblTempCollection;
             CREATE TEMPORARY TABLE tblTempCollection
             SELECT 
                 CutOffID
             FROM `memberentrycutoff`
             LIMIT 0; 
             
-                DELETE FROM tblTempCollection;
+            DELETE FROM tblTempCollection;
             
             SET intcoachmicjavCutOffID = 1;  
                
@@ -175,6 +173,8 @@ class SpGenerateRebates extends Migration
                 SET dblTotalPurchases = 0;
                 SET dblTotalRebatableValue = 0;
                 SET dblRebatesMaintainingBal = 0;
+                " . // get last entry of the cutoff of the month
+            "
                 SELECT 
                     cutoff.`CutOffID`,
                     cutoff.`MemberEntryID`,
@@ -209,6 +209,9 @@ class SpGenerateRebates extends Migration
                         WHERE CutOffID IN (SELECT CutOffID FROM tblTempCollection);
                         DELETE FROM tblTempCollection;
                     else
+                    " . //I think mao ni tong dynamic compresion
+            //gina update niya ang AcquiredByEntryID sa memberentrycutoff. wala ko kabalo ngano
+            "
                         GetSponsor:WHILE intNewSponsorEntryID <> intCompanyEntryID DO
                             SET intCutOffID = 0;
                             SET intMemberEntryID = 0;
@@ -606,7 +609,7 @@ class SpGenerateRebates extends Migration
                             if(cursorSponsorshipRebatesCount > 0) then
                                 GetSponsoredLevel:WHILE cursorSponsorshipRebatesCntr < cursorSponsorshipRebatesCount DO
 
-                                                                SET intCutOffID = 0;
+                                    SET intCutOffID = 0;
                                     SET intMemberEntryID = 0;
                                     SET intMemberID = 0;
                                     SET intSponsorEntryID = 0;
@@ -629,7 +632,7 @@ class SpGenerateRebates extends Migration
                                     
                                     if(dblTotalRebatableValue < dblRebatesMaintainingBal) then
 
-                                                                        SET intCutOffID = 0;
+                                        SET intCutOffID = 0;
                                         SET intMemberEntryID = intAcquiredByEntryID;
                                         SET intMemberID = 0;
                                         SET intSponsorEntryID = 0;
@@ -702,58 +705,50 @@ class SpGenerateRebates extends Migration
                                     end if;                        
                                     
                                     if(dblRebates > 0) then
-                                    
-                                                                        INSERT INTO ewalletledger SET
-                                            ComplanID = REBATES_COMPLAN_ID,
-                                            MemberID = intMainMemberID,
-                                            EarnedFromMemberID = intMemberID,
-                                            LevelNo = (intLevelNo + 1),
-                                            DateTimeEarned = NOW(),
-                                            EarnedMonth = MONTH(recCurrentDateTime),
-                                            EarnedYear = YEAR(recCurrentDateTime),
-                                            INAmount = dblRebates,
-                                            OUTAmount = 0,
-                                            OldBalance = dblEWalletRunningBal,
-                                            RunningBalance = (dblEWalletRunningBal + dblRebates),
-                                            Remarks = CONCAT(strRebatesType,' for the month of ', CAST(intCutOffMonth as CHAR), '-', CAST(intCutOffYear as CHAR)),
-                                            `Status` = 'Approved',
-                                            TransactionRefID = intMainMemberEntryID,
-                                            DateTimeCreated = curDateTime,
-                                            DateTimeUpdated = curDateTime;
+                                        INSERT INTO ewalletledger SET
+                                        ComplanID = REBATES_COMPLAN_ID,
+                                        MemberID = intMainMemberID,
+                                        EarnedFromMemberID = intMemberID,
+                                        LevelNo = (intLevelNo + 1),
+                                        DateTimeEarned = NOW(),
+                                        EarnedMonth = MONTH(recCurrentDateTime),
+                                        EarnedYear = YEAR(recCurrentDateTime),
+                                        INAmount = dblRebates,
+                                        OUTAmount = 0,
+                                        OldBalance = dblEWalletRunningBal,
+                                        RunningBalance = (dblEWalletRunningBal + dblRebates),
+                                        Remarks = CONCAT(strRebatesType,' for the month of ', CAST(intCutOffMonth as CHAR), '-', CAST(intCutOffYear as CHAR)),
+                                        `Status` = 'Approved',
+                                        TransactionRefID = intMainMemberEntryID,
+                                        DateTimeCreated = curDateTime,
+                                        DateTimeUpdated = curDateTime;
                                             
-                                                                        UPDATE `memberentry` SET
-                                            AccumulatedRewards = AccumulatedRewards + dblRebates
+                                        UPDATE `memberentry` SET
+                                        AccumulatedRewards = AccumulatedRewards + dblRebates
                                         WHERE MemberID = intMainMemberID;
 
-                                                                        SET dblEWalletRunningBal = dblEWalletRunningBal + dblRebates;
+                                        SET dblEWalletRunningBal = dblEWalletRunningBal + dblRebates;
                                         
                                     end if;
                                     
                                     
-                                                                INSERT INTO tblTempCollection SET
-                                        MemberEntryID = intMemberEntryID,
-                                        LevelNo = intLevelNo + 1;
+                                    INSERT INTO tblTempCollection SET
+                                    MemberEntryID = intMemberEntryID,
+                                    LevelNo = intLevelNo + 1;
                                     
                                     SET cursorSponsorshipRebatesCntr = cursorSponsorshipRebatesCntr + 1;
                                     
                                 END WHILE; 
                             end if;
-                            
                             CLOSE cursorSponsorshipRebates;
-                            
-                                                SET intLevelNo = intLevelNo + 1;
-                        
+                            SET intLevelNo = intLevelNo + 1;
                         END WHILE; 
                     end if;
-                    
                 end if;
-                
-                        SET intcoachmicjavCutOffID = intCutOffID;
-                    
+                SET intcoachmicjavCutOffID = intCutOffID;
             END WHILE; 
             DROP TEMPORARY TABLE IF EXISTS tblTempCollection;
             DROP TEMPORARY TABLE IF EXISTS tblTempCutOff;
-            
         END$$
         DELIMITER ;
         ";

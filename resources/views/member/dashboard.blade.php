@@ -28,30 +28,28 @@
 
 	<!-- Main content -->
 	<section class="content">
-
-      	<div class="row">
-	        <div class="col-md-12">
-	          <!-- Widget: user widget style 1 -->
-	          <div class="box box-widget widget-user-2">
-	            <!-- Add the bg color to the header using any of the bg-* classes -->
-	            <div class="widget-user-header" style="background-color: #dfb407;">
-	              <div class="widget-user-image">
-                    @if(File::exists('img/members/'.Session('MEMBER_ENTRY_ID').'.jpg'))
-		                <img id="imgMember" class="img-circle" src="{{ URL::to('img/members/'.Session('MEMBER_ENTRY_ID').'.jpg') }}" alt="Member Picture" onclick="UploadImage()">
-                    @else
-		                <img id="imgMember" class="img-circle" src="{{ URL::to('img/members/member-no-image.png') }}" alt="Member Picture"  onclick="UploadImage()">
-                    @endif
-	              </div>
-	              <!-- /.widget-user-image -->
-	              <h5 class="widget-user-desc" style="color:white;"  onclick="UploadImage()">{{ Session('MEMBER_NAME') }}</h5>
-	              <h4 class="widget-user-desc" style="color:white;"  onclick="UploadImage()">{{ 'IBO Number : '.Session('MEMBER_ENTRY_CODE').' - '.Session('MEMBER_PACKAGE') }}</h4>
-	            </div>
-	          </div>
-	          <!-- /.widget-user -->
-	        </div>
-	        <!-- /.col -->
-      	</div>
-      	<!-- /.row -->
+		<div class="box box-widget widget-user-2">
+			<div class="widget-user-header" style="background-color: #dfb407;">
+      			<div class="row">
+					<div class="col-md-7">
+						<div class="widget-user-image">
+							@if(File::exists('img/members/'.Session('MEMBER_ENTRY_ID').'.jpg'))
+								<img id="imgMember" class="img-circle" src="{{ URL::to('img/members/'.Session('MEMBER_ENTRY_ID').'.jpg') }}" alt="Member Picture" onclick="UploadImage()">
+							@else
+								<img id="imgMember" class="img-circle" src="{{ URL::to('img/members/member-no-image.png') }}" alt="Member Picture"  onclick="UploadImage()">
+							@endif
+						</div>
+						<h5 class="widget-user-desc" style="color:white;">{{ Session('MEMBER_NAME') }}</h5>
+						<h4 class="widget-user-desc" style="color:white;">{{ 'IBO Number : '.Session('MEMBER_ENTRY_CODE').' - '.Session('MEMBER_PACKAGE') }}</h4>
+						<h4 class="widget-user-desc" style="color:white;">{{ 'Rank Level : '.Session('MEMBER_RANK_LEVEL').' '.Session('MEMBER_RANK') }}</h4>
+					</div>
+					<div class="col-md-5">
+						<h4 class="widget-user-desc" style="color:white;">WIRE Income Projection: <span style="color:red;">(soon)</span></h4>
+						<h4 class="widget-user-desc" style="color:white;">REBATES Income Projection: <span style="color:red;">(soon)</span></h4>
+					</div>
+				</div>
+			</div>
+		</div>
 
 	    <div class="row">
 
