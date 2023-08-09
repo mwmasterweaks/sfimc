@@ -23,6 +23,13 @@ use App\Models\Code;
 class MemberEntry extends Model
 {
 
+  protected $table = 'memberentry';
+
+  public function sponsor()
+  {
+    return $this->belongsTo(Member::class, 'SponsorEntryID', 'MemberID');
+  }
+
   public function getDashboardFigures()
   {
     $TODAY = date("Y-m-d H:i:s");
