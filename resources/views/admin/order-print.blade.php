@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <title>Success Formula International - Order Print</title>
-    <link rel="stylesheet" href="{{URL::to('admin/bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
-    <link rel="stylesheet" href="{{URL::to('admin/dist/css/AdminLTE.min.css') }}">
-    <link rel="shortcut icon" href="{{URL::to('img/favicon.png')}}">
+    <link rel="stylesheet" href="{{ asset(config('app.src_name') . 'admin/bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{ asset(config('app.src_name') . 'admin/dist/css/AdminLTE.min.css') }}">
+    <link rel="shortcut icon" href="{{ asset(config('app.src_name') . 'img/favicon.png')}}">
     <style type="text/css">
       .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
         padding: 2px;
@@ -94,7 +94,7 @@
     <section class="content" style="margin-top:-30px;">
       <div class="row invoice-info" >
         <div class="col-sm-2 invoice-col" style="margin-top:13px;">
-          <img src='{{URL::to('img/logo-h.png')}}' alt=""style="height:40px;width:130px;" />
+          <img src='{{ asset(config('app.src_name') . 'img/logo-h.png')}}' alt=""style="height:40px;width:130px;" />
         </div>
         <div class="col-sm-8 " style="margin-top:30px;">
           <h4 style="margin-left:-70px;">ORDER</h4>

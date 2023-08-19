@@ -2,7 +2,7 @@
           <div class="row">
             <div class="col-md-5">
               <div class="main-logo">
-                <a href="index.html"><img src="{{URL::to('img/logo-head.png')}}" alt=""></a>
+                <a href="index.html"><img src="{{ asset(config('app.src_name') . '/img/logo-head.png') }}" alt=""></a>
               </div>
             </div>
             <div class="col-md-7 menu-column">

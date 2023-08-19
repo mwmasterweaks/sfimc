@@ -12,13 +12,13 @@
   @include('inc.front.frontjslink')
 
   <!--favicon-->
-  <link rel="shortcut icon" href="{{URL::to('img/logo.png')}}">
+  <link rel="shortcut icon" href="{{ asset(config('app.src_name') . 'img/logo.png')}}">
 </head>
 <body>
 
   <!-- Load Facebook SDK for JavaScript -->
       <div id="fb-root"></div>
-      <script>
+      {{--  <script>
         window.fbAsyncInit = function() {
           FB.init({
             xfbml            : true,
@@ -32,7 +32,7 @@
         js = d.createElement(s); js.id = id;
         js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
         fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));</script>
+      }(document, 'script', 'facebook-jssdk'));</script>  --}}
 
       <!-- Your Chat Plugin code -->
       <div class="fb-customerchat"
@@ -101,7 +101,7 @@
     width:200px;
     height:200px;
     background-color:#fff;
-    background-image:url('{{ URL::to('img/loader.gif') }}');
+    background-image:url('{{ asset(config('app.src_name') . 'img/loader.gif') }}');
     background-size: 200px 200px;
     background-repeat:no-repeat;
     background-position:center;

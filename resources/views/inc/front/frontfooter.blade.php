@@ -4,7 +4,7 @@
           <div class="col-md-4">
             <div class="footer-text">
               <a href="{{ route('home') }}">
-                <img src="{{URL::to('img/logo-h.png')}}" alt="logo">
+                <img src="{{ asset(config('app.src_name') . 'img/logo-h.png')}}" alt="logo">
               </a>
             </div>
 
@@ -60,7 +60,7 @@
                                     <li>
                                         <div class="img-holder">
                                             <a href="{{ route('news-event-detail').'?Title='.$newsevents->SlugTitle }}">
-                                              <img src="{{URL::to('img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}">
+                                              <img src="{{ asset(config('app.src_name') . 'img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}">
                                             </a>
                                             <div class="overlay-style-one">
                                                 <div class="box">

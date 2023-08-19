@@ -1,40 +1,40 @@
 <!-- jQuery js -->
-    <script src="{{URL::to('front/js/jquery.js')}}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/jquery.js') }}"></script>
     <!-- bootstrap js -->
-    <script src="{{URL::to('front/js/bootstrap.min.js')}}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/bootstrap.min.js') }}"></script>
     <!-- jQuery ui js -->
-    <script src="{{URL::to('front/js/jquery-ui.js')}}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/jquery-ui.js') }}"></script>
     <!-- owl carousel js -->
-    <script src="{{URL::to('front/js/owl.carousel.min.js')}}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/owl.carousel.min.js') }}"></script>
     
     <!-- mixit up -->
-    <script src="{{URL::to('front/js/wow.js')}}"></script>
-    <script src="{{URL::to('front/js/jquery.mixitup.min.js')}}"></script>
-    <script src="{{URL::to('front/js/jquery.fitvids.js')}}"></script>
-    <script src="{{URL::to('front/js/bootstrap-select.min.js')}}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/wow.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/jquery.mixitup.min.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/jquery.fitvids.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/bootstrap-select.min.js') }}"></script>
 
     <!-- revolution slider js -->
-    <script src="{{URL::to('front/assets/revolution/js/jquery.themepunch.tools.min.js')}}"></script>
-    <script src="{{URL::to('front/assets/revolution/js/jquery.themepunch.revolution.min.js')}}"></script>
-    <script src="{{URL::to('front/assets/revolution/js/extensions/revolution.extension.actions.min.js')}}"></script>
-    <script src="{{URL::to('front/assets/revolution/js/extensions/revolution.extension.carousel.min.js')}}"></script>
-    <script src="{{URL::to('front/assets/revolution/js/extensions/revolution.extension.kenburn.min.js')}}"></script>
-    <script src="{{URL::to('front/assets/revolution/js/extensions/revolution.extension.layeranimation.min.js')}}"></script>
-    <script src="{{URL::to('front/assets/revolution/js/extensions/revolution.extension.migration.min.js')}}"></script>
-    <script src="{{URL::to('front/assets/revolution/js/extensions/revolution.extension.navigation.min.js')}}"></script>
-    <script src="{{URL::to('front/assets/revolution/js/extensions/revolution.extension.parallax.min.js')}}"></script>
-    <script src="{{URL::to('front/assets/revolution/js/extensions/revolution.extension.slideanims.min.js')}}"></script>
-    <script src="{{URL::to('front/assets/revolution/js/extensions/revolution.extension.video.min.js')}}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/assets/revolution/js/jquery.themepunch.tools.min.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/assets/revolution/js/jquery.themepunch.revolution.min.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/assets/revolution/js/extensions/revolution.extension.actions.min.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/assets/revolution/js/extensions/revolution.extension.carousel.min.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/assets/revolution/js/extensions/revolution.extension.kenburn.min.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/assets/revolution/js/extensions/revolution.extension.layeranimation.min.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/assets/revolution/js/extensions/revolution.extension.migration.min.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/assets/revolution/js/extensions/revolution.extension.navigation.min.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/assets/revolution/js/extensions/revolution.extension.parallax.min.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/assets/revolution/js/extensions/revolution.extension.slideanims.min.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/assets/revolution/js/extensions/revolution.extension.video.min.js') }}"></script>
 
     <!-- fancy box -->
-    <script src="{{URL::to('front/js/jquery.fancybox.pack.js')}}"></script>
-    <script src="{{URL::to('front/js/jquery.polyglot.language.switcher.js')}}"></script>
-    <script src="{{URL::to('front/js/nouislider.js')}}"></script>
-    <script src="{{URL::to('front/js/jquery.bootstrap-touchspin.js')}}"></script>
-    <script src="{{URL::to('front/js/SmoothScroll.js')}}"></script>
-    <script src="{{URL::to('front/js/jquery.appear.js')}}"></script>
-    <script src="{{URL::to('front/js/jquery.flexslider.js')}}"></script>
-    <script src="{{URL::to('front/js/custom.js')}}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/jquery.fancybox.pack.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/jquery.polyglot.language.switcher.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/nouislider.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/jquery.bootstrap-touchspin.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/SmoothScroll.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/jquery.appear.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/jquery.flexslider.js') }}"></script>
+    <script src="{{ asset(config('app.src_name') . 'front/js/custom.js') }}"></script>
 
         <script type="text/javascript">
 
@@ -59,7 +59,7 @@
                 function buttonOneClick(vID, vLabel, vIsDisabled){
                         var btn = $("#"+vID);
                         if(vIsDisabled){
-                                btn.html('<img src="{{ URL::to('img/button-loader.gif') }}" style="max-height:15px;">');
+                                btn.html('<img src="{{ asset('img/button-loader.gif') }}" style="max-height:15px;">');
                                 btn.attr("disabled", true);
                         }else{
                                 btn.html(vLabel);

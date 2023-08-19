@@ -428,7 +428,7 @@ tr:nth-child(even) {
 
                     <div class="modal-header" style="background-color: #3c8dbc;">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title"  style="text-align:center; color:white;"><b>Member Entry Information</b></h4>
+                        <h4 class="modal-title"  style="text-align:center; color:white;"><b>Member Entry Information admin</b></h4>
                     </div>
 
                     <div class="modal-body">

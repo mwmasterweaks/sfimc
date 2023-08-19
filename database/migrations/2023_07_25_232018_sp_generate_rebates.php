@@ -300,6 +300,9 @@ class SpGenerateRebates extends Migration
             AND YEAR(EndDate) = intCutOffYear;
             
             SET intcoachmicjavCutOffID = 1;
+            "
+            . // DARI NA ANG SUGOD SA CALCULATION
+            "
             GetIssueRebates:WHILE intcoachmicjavCutOffID > 0 DO
                 SET intLevelNo = 0;
                 SET intCutOffID = 0;

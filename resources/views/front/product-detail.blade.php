@@ -61,7 +61,7 @@
             <div class="col-md-5 col-sm-12 col-xs-12">
               <div class="single-item">
                 <div class="img-holder">            
-                  <img src="{{URL::to('img/products/'.$ProductID.'/'.$ProductID.'-1-300x300.jpg')}}" alt="{{ $ProductName }}"/>
+                  <img src="{{ asset(config('app.src_name') . 'img/products/'.$ProductID.'/'.$ProductID.'-1-300x300.jpg')}}" alt="{{ $ProductName }}"/>
                 </div>
               </div>
             </div>

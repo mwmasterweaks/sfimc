@@ -50,7 +50,7 @@
             <div class="single-item">
               <div class="img-holder">
                 <a href="{{ route('product-detail').'?ProductName='.$inv->ProductName}}">
-                  <img src="{{URL::to('img/products/'.$inv->ProductID.'/'.$inv->ProductID.'-1-300x300.jpg')}}" alt="{{ $inv->ProductName }}"/>
+                  <img src="{{ asset(config('app.src_name') . 'img/products/'.$inv->ProductID.'/'.$inv->ProductID.'-1-300x300.jpg')}}" alt="{{ $inv->ProductName }}"/>
                 </a>
               </div>
               <div class="overlay">
