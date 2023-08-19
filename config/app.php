@@ -14,6 +14,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'src_name' => env('SRC_NAME', 'public/'),
 
     /*
     |--------------------------------------------------------------------------
@@ -238,7 +239,7 @@ return [
 
     //Main Center ID
     'MAIN_CENTER_ID' => '1',
-    
+
     //Company Details
     'COMPANY_NAME' => 'Success Formula International',
     'COMPANY_ADDRESS1' => 'Door 3&4, EC Business Center',
@@ -248,11 +249,11 @@ return [
     'COMPANY_TEL' => '(082) 221-5931',
     'COMPANY_MOBILE1' => '+639287117786',
     'COMPANY_MOBILE2' => '+639654518861',
-    
+
     //Source Type
     'SOURCE_ADMIN' => 'Admin',
     'SOURCE_WEBSITE' => 'Website',
-    
+
     //Status Type
     'STATUS_UNVERIFIED' => 'Unverified',
     'STATUS_VERIFIED' => 'Verified',

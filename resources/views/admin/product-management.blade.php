@@ -264,7 +264,7 @@
                         <br>
                         <div class="file-preview-frame">
                             <!--Product Image Display Here  -->
-                            <img id="output" src="{{ URL::to('img/products/product-no-image-300x300.jpg') }}" style="max-width: 500px;" />
+                            <img id="output" src="{{ asset(config('app.src_name') . 'img/products/product-no-image-300x300.jpg') }}" style="max-width: 500px;" />
                        	</div>
                    	</div>
             	</div>

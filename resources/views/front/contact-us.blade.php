@@ -4,7 +4,7 @@
     <div class="contact_details sec-padd">
         <div class="home-google-map">
           <div>
-            <img src="{{URL::to('img/office-map.png')}}" alt="logo">
+            <img src="{{ asset(config('app.src_name') . 'img/office-map.png')}}" alt="logo">
           </div>
         </div>
       

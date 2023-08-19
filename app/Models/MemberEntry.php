@@ -19,6 +19,7 @@ use DB;
 
 use App\Models\Misc;
 use App\Models\Code;
+use App\Models\MemberTree;
 
 class MemberEntry extends Model
 {
@@ -862,6 +863,81 @@ class MemberEntry extends Model
 
     return $EntryID;
   }
+
+  function updateMemberTree($newMemberID)
+  {
+    // Fetch the new member and their sponsor from the members table
+    $newMember = DB::table('memberentry')
+      ->where(
+        'id',
+        $newMemberID
+      )
+      ->first();
+
+    $sponsor = DB::table('memberentry')
+      ->where(
+        'id',
+        $newMember->sponsor_id
+      )
+      ->first();
+
+    if (!$newMember || !$sponsor) {
+      // Handle cases where the new member or sponsor is not found
+      return;
+    }
+
+    // Determine the ancestor_id and descendant_id for the member_tree table
+    $ancestorID = $sponsor->MemberID;
+    $descendantID = $newMemberID;
+
+    // Calculate the depth based on the sponsor's depth in the member_tree table
+    $sponsorDepth = MemberTree::where('descendant_id', $sponsor->MemberID)->max('depth');
+    $depth = $sponsorDepth + 1;
+
+    // Insert the new relationship into the member_tree table
+    MemberTree::create([
+      'ancestor_id' => $ancestorID,
+      'descendant_id' => $descendantID,
+      'depth' => $depth,
+    ]);
+
+    // Check if the sponsor has an ancestor and update the member_tree table recursively
+    if ($sponsor->sponsor_id) {
+      updateMemberTreeRecursively($sponsor->MemberID, $descendantID, $depth);
+    }
+  }
+
+  function updateMemberTreeRecursively($ancestorID, $descendantID, $depth)
+  {
+    $sponsor = DB::table('memberentry')
+      ->where('id', $ancestorID)
+      ->first();
+
+    if (!$sponsor) {
+      // Handle cases where the sponsor is not found
+      return;
+    }
+
+    // Determine the ancestor_id for the member_tree table
+    $newAncestorID = $sponsor->sponsor_id;
+
+    // Calculate the depth based on the sponsor's depth in the member_tree table
+    $sponsorDepth = MemberTree::where('descendant_id', $sponsor->MemberID)->max('depth');
+    $newDepth = $sponsorDepth + 1;
+
+    // Insert the new relationship into the member_tree table
+    MemberTree::create([
+      'ancestor_id' => $newAncestorID,
+      'descendant_id' => $descendantID,
+      'depth' => $newDepth,
+    ]);
+
+    // Recursively update the member_tree table for the sponsor's ancestor
+    if ($sponsor->sponsor_id) {
+      updateMemberTreeRecursively($sponsor->MemberID, $descendantID, $newDepth);
+    }
+  }
+
 
   public function doTransferMemberPosition($data)
   {

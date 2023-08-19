@@ -56,6 +56,7 @@
 				                  <th>ID</th>
 				                  <th>IBO Number</th>
 				                  <th>Member Name</th>
+								  <th style="text-align: right;">Total RV</th>
 				                  <th style="text-align: right;">Total Sold</th>
 				                </tr>
 			                </thead>
@@ -158,6 +159,7 @@
 			tdIBONumber = "<span style='font-weight:normal;'>" + vData.EntryCode + "</span>";
 			tdMemberName = "<span style='font-weight:normal;'>" + vData.MemberName + "</span>";
 			tdTotalDirectSales = "<span style='font-weight:normal;' class='pull-right'>" + FormatDecimal(vData.TotalDirectSales,2) + "</span>";
+			tdTotalRV = "<span style='font-weight:normal;' class='pull-right'>" + FormatDecimal(vData.TotalRebatableValue,2) + "</span>";
 
 			//Check if record already listed
 			var IsRecordExist = false;
@@ -171,7 +173,8 @@
 			    	curData[0] = tdID;
 			    	curData[1] = tdIBONumber;
 			    	curData[2] = tdMemberName;
-			    	curData[3] = tdTotalDirectSales;
+			    	curData[3] = tdTotalRV;
+			    	curData[4] = tdTotalDirectSales;
 			    	tblList.row(rowIdx).data(curData).invalidate().draw();
 			    }
 
@@ -183,6 +186,7 @@
 						tdID,
 						tdIBONumber,
 						tdMemberName,
+						tdTotalRV,
 						tdTotalDirectSales
 					]).draw().node();			
 			}

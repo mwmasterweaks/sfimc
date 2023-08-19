@@ -4,7 +4,7 @@
       <td>
         <div style='margin:0 auto;background:#fff;color:#000; padding:10px;'>
           <center>
-            <img style='margin:0 auto;width:500px;' src="{{URL::to('img/logo-h.png')}}" >
+            <img style='margin:0 auto;width:500px;' src="{{ asset(config('app.src_name') . 'img/logo-h.png')}}" >
           </center>
 
           <h3>Welcome to {{ config("app.COMPANY_NAME") }}!</h3>

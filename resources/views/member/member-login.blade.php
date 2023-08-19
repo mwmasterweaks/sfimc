@@ -8,21 +8,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <!-- External CSS libraries -->
-    <link rel="stylesheet" type="text/css" href="{{ URL::to('admin/css/admin-login.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset(config('app.src_name') . 'admin/css/admin-login.css') }}">
     <!--favicon-->
-    <link rel="shortcut icon" href="{{URL::to('img/logo.png')}}">
-    <link type="text/css" rel="stylesheet" href="{{ URL::to('admin/css/assets/css/bootstrap.min.css') }}">
-    <link type="text/css" rel="stylesheet" href="{{ URL::to('admin/css/assets/fonts/font-awesome/css/font-awesome.min.css') }}">
-    <link type="text/css" rel="stylesheet" href="{{ URL::to('admin/css/assets/fonts/flaticon/font/flaticon.css') }}">
+    <link rel="shortcut icon" href="{{ asset(config('app.src_name') . 'img/logo.png')}}">
+    <link type="text/css" rel="stylesheet" href="{{ asset(config('app.src_name') . 'admin/css/assets/css/bootstrap.min.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset(config('app.src_name') . 'admin/css/assets/fonts/font-awesome/css/font-awesome.min.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset(config('app.src_name') . 'admin/css/assets/fonts/flaticon/font/flaticon.css') }}">
 
     <!-- Favicon icon -->
-    <link rel="shortcut icon" href="{{URL::to('img/logo.png')}}">
+    <link rel="shortcut icon" href="{{ asset(config('app.src_name') . 'img/logo.png')}}">
 
     <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
 
     <!-- Custom Stylesheet -->
-    <link type="text/css" rel="stylesheet" href="{{ URL::to('admin/css/assets/css/style.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset(config('app.src_name') . 'admin/css/assets/css/style.css') }}">
 
 </head>
 <body id="top">
@@ -76,14 +76,14 @@
                                 </div>
                 </div>
                 <div class="bg-photo">
-                    <img src="{{ URL::to('admin/css/assets/img/img-6.png') }}" alt="bg" class="img-fluid">
+                    <img src="{{ asset(config('app.src_name') . 'admin/css/assets/img/img-6.png') }}" alt="bg" class="img-fluid">
                 </div>
             </div>
             <div class="col-xl-4 col-lg-5 col-md-12 bg-color-6" style = "background: linear-gradient(110.1deg, rgb(34, 126, 34) 2.9%, rgb(168, 251, 60) 90.3%);">
                 <div class="form-section" id="divLogin" >
                     <div class="logo">
                         <a href="/">
-                            <img src="{{ URL::to('admin/css/assets/img/logos/logo.png') }}" alt="logo" style = "width:120px;height:120px">
+                            <img src="{{ asset(config('app.src_name') . 'admin/css/assets/img/logos/logo.png') }}" alt="logo" style = "width:120px;height:120px">
                         </a>
                     </div>
                     <h3 style = "color:#fff" >Member Login</h3>

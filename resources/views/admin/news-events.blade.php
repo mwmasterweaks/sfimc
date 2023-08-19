@@ -102,7 +102,7 @@
 		                        <br>
 		                        <div class="file-preview-frame">
 		                            <!--Product Image Display Here  -->
-		                            <img id="output" src="{{ URL::to('img/newsevents/no-image-300x300.jpg') }}" style="max-width: 500px;" />
+		                            <img id="output" src="{{ asset(config('app.src_name') . 'img/newsevents/no-image-300x300.jpg') }}" style="max-width: 500px;" />
 		                       	</div>
 		                   	</div>
 	                   	</div>
@@ -330,7 +330,7 @@
 			$("#Status").val('{{ config('app.STATUS_UNPUBLISHED') }}').change();
 			window.parent.tinymce.get('Contents').setContent('');
 
-			$("#output").attr("src","{{ URL::to('img/newsevents/no-image-300x300.jpg') }}");
+			$("#output").attr("src","{{ asset(config('app.src_name') . 'img/newsevents/no-image-300x300.jpg') }}");
 
 			$("#PostedBy").val('');
 			$("#PublishDate").val('');
@@ -376,7 +376,7 @@
 							$("#Title").val(data.NewsEventsInfo.Title);
 							$("#Status").val(data.NewsEventsInfo.Status).change();
 
-							$("#output").attr("src","{{ URL::to('img/newsevents') }}/" + data.NewsEventsInfo.RecordID + "-1-300x300.jpg");
+							$("#output").attr("src","{{ asset(config('app.src_name') . 'img/newsevents') }}/" + data.NewsEventsInfo.RecordID + "-1-300x300.jpg");
 
 							window.parent.tinymce.get('Contents').setContent(data.NewsEventsInfo.Contents);
 

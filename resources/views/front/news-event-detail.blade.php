@@ -41,7 +41,7 @@
                     <section class="blog-container news">  
                         <div class="news-post">
                             <div class="news-post-image">
-                                <img src="{{URL::to('img/newsevents/'.$RecordID.'.jpg')}}" alt="{{ $Title }}" alt="Image" class="img-responsive">
+                                <img src="{{ asset(config('app.src_name') . 'img/newsevents/'.$RecordID.'.jpg')}}" alt="{{ $Title }}" alt="Image" class="img-responsive">
                             </div>
                             <div class="news-post-text">
                                 <h3><a href="#">{{ $Title }}</a></h3>
@@ -74,7 +74,7 @@
                                         <li>
                                             <div class="img-holder">
                                                 <a href="{{ route('news-event-detail').'?Title='.$newsevents->SlugTitle }}">
-                                                    <img src="{{URL::to('img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}">
+                                                    <img src="{{ asset(config('app.src_name') . 'img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}">
                                                 </a>
                                                 <div class="overlay-style-one">
                                                     <div class="box">
