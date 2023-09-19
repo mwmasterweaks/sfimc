@@ -135,7 +135,7 @@ class EWallet extends Model
             COALESCE(RunningBalance,0) as RunningBalance
         ")
       ->where('MemberID', $MemberID)
-      ->orderby('DateTimeCreated', 'DESC')
+      ->orderby('LedgerID', 'DESC')
       ->first();
 
     $EWalletBalance = 0;

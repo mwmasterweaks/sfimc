@@ -58,6 +58,8 @@ class MemberEntry extends Model
         ->join('member as mbr', 'mbr.MemberID', '=', 'mbrentry.MemberID')
         ->selectraw("
                 COALESCE(mbrentry.EntryID,0) as EntryID,
+                COALESCE(mbrentry.RankLevel,1) as RankLevel,
+                COALESCE(mbrentry.Rank,'') as Rank,
                 COALESCE(mbrentry.EntryCode,'') as EntryCode,
 
                 COALESCE(mbrentry.PackageID,0) as PackageID,
@@ -85,6 +87,8 @@ class MemberEntry extends Model
         ->join('member as mbr', 'mbr.MemberID', '=', 'mbrentry.MemberID')
         ->selectraw("
                 COALESCE(mbrentry.EntryID,0) as EntryID,
+                COALESCE(mbrentry.RankLevel,1) as RankLevel,
+                COALESCE(mbrentry.Rank,'') as Rank,
                 COALESCE(mbrentry.EntryCode,'') as EntryCode,
 
                 COALESCE(mbrentry.PackageID,0) as PackageID,
@@ -134,6 +138,8 @@ class MemberEntry extends Model
 
         Session::put('MEMBER_ENTRY_ID', $EntryID);
         Session::put('MEMBER_ENTRY_CODE', $EntryCode);
+        Session::put('MEMBER_RANK_LEVEL', $info->RankLevel);
+        Session::put('MEMBER_RANK', $info->Rank);
         Session::put('MEMBER_PACKAGE_ID', $PackageID);
         Session::put('MEMBER_PACKAGE', $Package);
         Session::put('MEMBER_ID', $MemberID);
