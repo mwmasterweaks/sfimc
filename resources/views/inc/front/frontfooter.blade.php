@@ -30,7 +30,7 @@
           </div>
           <div class="col-md-4">
             <div class="location">
-              <h3>Location</h3>
+              <h3 style="color: darkgreen !important;">Location</h3>
               <ul>
                 <li><i class="fa fa-home"></i> &nbsp&nbsp&nbsp&nbsp&nbsp{{ config('app.COMPANY_ADDRESS1').', '.config('app.COMPANY_ADDRESS2').', '.config('app.COMPANY_ADDRESS3') }}</li>
                 <li><i class="fa fa-phone"></i> <a href="">{{ config('app.COMPANY_MOBILE1').' / '.config('app.COMPANY_MOBILE2') }}</a></li>
@@ -51,7 +51,7 @@
             <div class="sidebar-wrapper">
               <div class="single-sidebar">
                             <div class="wedgit-title">
-                                <h3>Popular News & Events</h3>
+                                <h3 style="color: darkgreen !important;">Popular News & Events</h3>
                             </div>
                             <ul class="popular-post">
                                 @php($NewsEventCntr = 0)
@@ -60,7 +60,7 @@
                                     <li>
                                         <div class="img-holder">
                                             <a href="{{ route('news-event-detail').'?Title='.$newsevents->SlugTitle }}">
-                                              <img src="{{URL::to('img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}">
+                                              <img style="position: absolute;height: 98%;top: 1px;" src="{{URL::to('img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}">
                                             </a>
                                             <div class="overlay-style-one">
                                                 <div class="box">
@@ -72,9 +72,9 @@
                                         </div>
                                         <div class="title-holder">
                                             <a href="{{ route('news-event-detail').'?Title='.$newsevents->SlugTitle }}">
-                                              <h5 class="post-title">{{ $newsevents->Title }} - {{ $newsevents->PostedBy }}</h5>
+                                              <h5 class="post-title" >{{ $newsevents->Title }} - {{ $newsevents->PostedBy }}</h5>
                                             </a>
-                                            <h6 class="post-date">{{ date_format(date_create($newsevents->PublishDate),"d F Y") }}</h6>
+                                            <h6 class="post-date" style="color: white !important;">{{ date_format(date_create($newsevents->PublishDate),"d F Y") }}</h6>
                                         </div>
                                     </li>
                                   @endif
