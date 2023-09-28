@@ -46,11 +46,11 @@
         </div>
         <div class="col-md-9 col-sm-12">
           @foreach($InventoryList as $inv)
-          <div class="col-md-4 col-sm-6 col-xs-12"  style="min-height:480px;">
+          <div class="col-md-4 col-sm-6 col-xs-12"  style="min-height:500px;">
             <div class="single-item">
               <div class="img-holder">
                 <a href="{{ route('product-detail').'?ProductName='.$inv->ProductName}}">
-                  <img src="{{URL::to('img/products/'.$inv->ProductID.'/'.$inv->ProductID.'-1-300x300.jpg')}}" alt="{{ $inv->ProductName }}"/>
+                  <img style="height: 260px; width:260px; object-fit: cover;" src="{{URL::to('img/products/'.$inv->ProductID.'/'.$inv->ProductID.'-1-300x300.jpg')}}" alt="{{ $inv->ProductName }}"/>
                 </a>
               </div>
               <div class="overlay">
@@ -64,10 +64,11 @@
                       <div style="font-size: 12px;">{{ 'Brand : '.$inv->Brand }}</div>
                       <div style="font-size: 12px;">{{ 'Category : '.$inv->Category }}</div>
                   </div>
-                  <div style="padding: 5px;">
+                  
+                </div>
+                <div style="position: relative;">
                     <a href="#" onclick="AddToCart({{ $inv->ProductID }},1, '')" class="thm-btn" style="text-align: center; width: 100%">Add To Cart</a>
                   </div>
-                </div>
               </div>
             
             </div>

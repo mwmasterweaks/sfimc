@@ -1,15 +1,14 @@
         <div class="container">
           <div class="row">
-            <div class="col-md-5">
+            <div class="col-md-4">
               <div class="main-logo">
                 <a href="index.html"><img src="{{URL::to('img/logo-head.png')}}" alt=""></a>
               </div>
             </div>
-            <div class="col-md-7 menu-column">
+            <div class="col-md-8 menu-column">
               <nav class="main-menu">
                 <div class="navbar-header">     
                   <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                      <span class="icon-bar"></span>
                       <span class="icon-bar"></span>
                       <span class="icon-bar"></span>
                       <span class="icon-bar"></span>

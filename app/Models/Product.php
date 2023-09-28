@@ -302,9 +302,9 @@ class Product extends Model
     $ImageDestination = "img/products/" . $ProductID . "/";
     File::makeDirectory($ImageDestination, 0777, true, true);
 
-    copy("img/products/product-no-image-" . config('app.Thumbnail') . ".jpg", $ImageDestination . $ProductID . "-1-" . config('app.Thumbnail') . ".jpg");
+    copy("img/products/product-no-image-" . config('app.Thumbnail') . ".png", $ImageDestination . $ProductID . "-1-" . config('app.Thumbnail') . ".jpg");
 
-    copy("img/products/product-no-image-" . config('app.Dimension') . ".jpg", $ImageDestination . $ProductID . "-1-" . config('app.Dimension') . ".jpg");
+    copy("img/products/product-no-image-" . config('app.Dimension') . ".png", $ImageDestination . $ProductID . "-1-" . config('app.Dimension') . ".jpg");
   }
 
   public function doUploadProductPhoto($data)
