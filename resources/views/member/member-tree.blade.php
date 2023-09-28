@@ -21,7 +21,7 @@
 								{{ "Level ".$upline->depth }} 
 								  	<ul>
 										<li>
-											{{ $upline->EntryCode }} - {{ strtoupper($upline->FirstName) }} {{ strtoupper($upline->LastName) }}
+											{{ $upline->EntryCode }} - {{ ucwords(strtolower($upline->FirstName)) }} {{ ucwords(strtolower($upline->LastName)) }}
 										</li>
 									</ul>
 							  </li>
@@ -32,7 +32,7 @@
 								  	<ul>
 										@foreach($downline as $down)
 										<li>
-											{{ $down->EntryCode }} - {{ strtoupper($down->FirstName) }} {{ strtoupper($down->LastName) }}
+											{{ $down->EntryCode }} - {{ ucwords(strtolower($down->FirstName)) }} {{ ucwords(strtolower($down->LastName)) }}
 										</li>
 										@endforeach
 									</ul>
