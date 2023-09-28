@@ -133,6 +133,33 @@ class AdminController extends Controller
 		return View::make('admin/dashboard')->with($data);
 	}
 
+	public function showMemberTree()
+	{
+
+		if (!$this->IsAdminLoggedIn()) {
+			return Redirect::route('admin-logout');
+		}
+
+		// $Admin = new Admin();
+		$data['upline'] = DB::table('member_tree')->where('descendant_id','2940')
+		->join('member', 'member.MemberID', '=', 'member_tree.ancestor_id')
+		->join('memberentry', 'memberentry.MemberID', '=', 'member.MemberID')
+		->select('member.*','member_tree.*','memberentry.EntryCode','memberentry.MemberID')
+		->orderBy('member_tree.depth','ASC')->get()->toArray();
+
+		$data['downline'] = DB::table('member_tree')->where('ancestor_id','2940')
+		->join('member', 'member.MemberID', '=', 'member_tree.descendant_id')
+		->join('memberentry', 'memberentry.MemberID', '=', 'member.MemberID')
+		->orderBy('depth','ASC')->get()->groupBy('depth');
+		
+		$data['Page'] = 'member-tree';
+		$data['Token'] = csrf_token();
+		$data = $this->SetAdminInitialData($data);
+
+		return View::make('admin/member-tree')->with($data);
+	}
+
+
 	//CENTER ------------------------------------------------
 	public function showCenterManagement()
 	{

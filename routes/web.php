@@ -150,6 +150,11 @@ Route::get('/admin-dashboard', [
     'as' => 'admin-dashboard'
 ]);
 
+Route::get('/admin-member-tree', [
+    'uses' => 'AdminController@showMemberTree',
+    'as' => 'admin-member-tree'
+]);
+
 //CENTER =======================================================================================================================================
 Route::get('/admin-center-management', [
     'uses' => 'AdminController@showCenterManagement',
@@ -936,6 +941,10 @@ Route::get('/member-vouchers', [
     'as' => 'member-vouchers'
 ]);
 
+Route::get('/member-tree', [
+    'uses' => 'MemberController@showMemberTree',
+    'as' => 'member-tree'
+]);
 //MAIL =======================================================================================================================================
 Route::post('/do-forgot-password', [
     'uses' => 'MailController@doForgetPassword',

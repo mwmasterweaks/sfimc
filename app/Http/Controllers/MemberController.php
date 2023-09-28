@@ -259,6 +259,32 @@ class MemberController extends Controller {
 
     }
 
+	public function showMemberTree()
+	{
+
+		if (!$this->IsMemberLoggedIn()) {
+			return Redirect::route('member-logout');
+		}
+		$MemberEntryID = Session('MEMBER_ENTRY_ID');
+		// $Admin = new Admin();
+		$data['upline'] = DB::table('member_tree')->where('descendant_id',$MemberEntryID)
+		->join('member', 'member.MemberID', '=', 'member_tree.ancestor_id')
+		->join('memberentry', 'memberentry.MemberID', '=', 'member.MemberID')
+		->select('member.*','member_tree.*','memberentry.EntryCode','memberentry.MemberID')
+		->orderBy('member_tree.depth','ASC')->get()->toArray();
+
+		$data['downline'] = DB::table('member_tree')->where('ancestor_id',$MemberEntryID)
+		->join('member', 'member.MemberID', '=', 'member_tree.descendant_id')
+		->join('memberentry', 'memberentry.MemberID', '=', 'member.MemberID')
+		->orderBy('depth','ASC')->get()->groupBy('depth');
+		
+		$data['Page'] = 'member-tree';
+		$data['Token'] = csrf_token();
+		$data = $this->SetMemberInitialData($data);
+
+		return View::make('member/member-tree')->with($data);
+	}
+
     //Change Password ------------------------------------------------
     public function showChangePassword(){
 
