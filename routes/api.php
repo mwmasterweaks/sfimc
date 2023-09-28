@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('matching', "AdminController@matching");
 Route::get('generateRabates/{date}', "MemberController@generateRabates");
+Route::get('generateWireCode/{date}', "WirecodeController@generateWireCode");
 Route::get('genMemberTree', "MemberController@genMemberTree");
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

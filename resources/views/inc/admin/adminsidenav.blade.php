@@ -19,7 +19,7 @@
       <!-- Sidebar user panel -->
       <div class="user-panel">
         <div class="pull-left image">
-          <img src="{{ URL::to('img/members/member-no-image.png') }}" class="img-circle" alt="User Image">
+          <img src="{{ asset(config('app.src_name') . 'img/members/member-no-image.png') }}" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
           <p>{{ Session('ADMIN_FULLNAME') }}</p>
@@ -66,6 +66,24 @@
               @if($IsCodeDistribution)
               <li><a href="{{ route('admin-code-distribution') }}"><i class="fa fa-list"></i> Code Distribution</a></li>
               @endif
+            </ul>
+          </li>
+        @endif
+
+        @php($wirecode = Session('IS_SUPER_ADMIN')==true ? true : $UserAccountModel->getUserAccountAccess(Session('ADMIN_ACCOUNT_ID'),'Wire Code'))  
+        @if($wirecode)
+          <li class="treeview">
+            <a href="#">
+              <i class="fa fa-list"></i>
+              <span>Wire Management</span>
+              <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+            </a>
+            <ul class="treeview-menu">
+              <li><a href="{{ route('admin-wirecode') }}"><i class="fa fa-list"></i> Wire Code </a></li>
+              <li><a href="{{ route('admin-wire-history') }}"><i class="fa fa-list"></i> Wire Active History</a></li>
+              <li><a href="{{ route('admin-member-active-wire') }}"><i class="fa fa-list"></i> Members Activate Wire</a></li>
             </ul>
           </li>
         @endif

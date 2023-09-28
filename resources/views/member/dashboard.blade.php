@@ -34,9 +34,9 @@
 					<div class="col-md-7">
 						<div class="widget-user-image">
 							@if(File::exists('img/members/'.Session('MEMBER_ENTRY_ID').'.jpg'))
-								<img id="imgMember" class="img-circle" src="{{ URL::to('img/members/'.Session('MEMBER_ENTRY_ID').'.jpg') }}" alt="Member Picture" onclick="UploadImage()">
+								<img id="imgMember" class="img-circle" src="{{ asset(config('app.src_name') . 'img/members/'.Session('MEMBER_ENTRY_ID').'.jpg') }}" alt="Member Picture" onclick="UploadImage()">
 							@else
-								<img id="imgMember" class="img-circle" src="{{ URL::to('img/members/member-no-image.png') }}" alt="Member Picture"  onclick="UploadImage()">
+								<img id="imgMember" class="img-circle" src="{{ asset(config('app.src_name') . 'img/members/member-no-image.png') }}" alt="Member Picture"  onclick="UploadImage()">
 							@endif
 						</div>
 						<h5 class="widget-user-desc" style="color:white;">{{ Session('MEMBER_NAME') }}</h5>
@@ -201,7 +201,7 @@
                         <br>
                         <div class="file-preview-frame">
                             <!--Product Image Display Here  -->
-                            <img id="output" src="{{ URL::to('img/members/member-no-image.png') }}" style="max-width: 500px;" />
+                            <img id="output" src="{{ asset(config('app.src_name') . 'img/members/member-no-image.png') }}" style="max-width: 500px;" />
                        	</div>
                    	</div>
             	</div>

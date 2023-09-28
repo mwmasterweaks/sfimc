@@ -170,6 +170,53 @@ Route::post('/do-save-center', [
     'uses' => 'AdminController@doSaveCenter',
     'as' => 'do-save-center'
 ]);
+//WIRES =======================================================================================================================================
+Route::get('/admin-wirecode', [
+    'uses' => 'AdminController@showWireCode',
+    'as' => 'admin-wirecode'
+]);
+Route::get('/admin-wire-history', [
+    'uses' => 'AdminController@showWireHistory',
+    'as' => 'admin-wire-history'
+]);
+Route::get('/admin-member-active-wire', [
+    'uses' => 'AdminController@showMemberActiveWire',
+    'as' => 'admin-member-active-wire'
+]);
+
+Route::post('/get-wirecode', [
+    'uses' => 'WirecodeController@index',
+    'as' => 'get-wirecode'
+]);
+Route::post('/do-save-wire', [
+    'uses' => 'WirecodeController@store',
+    'as' => 'do-save-wire'
+]);
+Route::post('/do-update-wire', [
+    'uses' => 'WirecodeController@update',
+    'as' => 'do-update-wire'
+]);
+Route::post('/do-search-wire', [
+    'uses' => 'WirecodeController@search_data',
+    'as' => 'do-search-wire'
+]);
+Route::post('/do-search-active-wire', [
+    'uses' => 'WirecodeController@search_active_wire',
+    'as' => 'do-search-active-wire'
+]);
+Route::post('/get-wirecode-history', [
+    'uses' => 'WirecodeController@fetch_wirecode_active',
+    'as' => 'get-wirecode-history'
+]);
+
+Route::post('/do-search-member-active-wire', [
+    'uses' => 'WirecodeController@search_member_active_wire',
+    'as' => 'do-search-member-active-wire'
+]);
+Route::post('/get-member-active-wire', [
+    'uses' => 'WirecodeController@fetch_member_active_wire',
+    'as' => 'get-member-active-wire'
+]);
 
 //CODES =======================================================================================================================================
 Route::get('/admin-code-generation', [

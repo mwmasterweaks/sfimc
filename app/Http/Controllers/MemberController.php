@@ -37,11 +37,15 @@ use App\Models\EWalletWithdrawal;
 use App\Models\UserAccounts;
 use App\Models\memberentrycutoff;
 use Carbon\Doctrine\CarbonType;
+use App\Models\wirecode;
+use App\Models\wirecode_active;
+use App\Models\member_activate_wire;
 
 class MemberController extends Controller
 {
 	private $TotalAcquiredRebatableValue = 0;
 	private $CutOffIDsCantMaintain = [];
+	private $WirecodeController = "App\Http\Controllers\WirecodeController";
 	public function showMemberLogin()
 	{
 
@@ -126,6 +130,9 @@ class MemberController extends Controller
 
 		$data['Page'] = 'dashboard';
 		$data['Token'] = csrf_token();
+		//$data['testdata'] = "testdataaa";
+		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
+		//dd(app($this->WirecodeController)->get_active_wire());
 		$data = $this->SetMemberInitialData($data);
 
 		$data['DashboardFigures'] = $MemberEntry->getDashboardFigures();
@@ -147,6 +154,7 @@ class MemberController extends Controller
 		$data['Page'] = 'member-genealogy';
 		$data['Token'] = csrf_token();
 		$data = $this->SetMemberInitialData($data);
+		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
 		$data['CountryCityList'] = $Misc->getCountryCityList(174);
 		$data['CountryList'] = $Misc->getCountryList();
 		$data['TOP'] = $MemberEntry->getMemberEntryInfo($MemberEntryID);
@@ -167,6 +175,7 @@ class MemberController extends Controller
 		$data['Page'] = 'member-profile';
 		$data['Token'] = csrf_token();
 		$data = $this->SetMemberInitialData($data);
+		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
 
 		$EntryID = Session("MEMBER_ENTRY_ID");
 		$data['MemberInfo'] = $MemberEntry->getMemberEntryInfo($EntryID);
@@ -185,6 +194,7 @@ class MemberController extends Controller
 		$data['Page'] = 'member-ewallet-ledger';
 		$data['Token'] = csrf_token();
 		$data = $this->SetMemberInitialData($data);
+		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
 
 		return View::make('member/member-ewallet')->with($data);
 	}
@@ -198,6 +208,7 @@ class MemberController extends Controller
 		$data['Page'] = 'ewallet-withdrawal';
 		$data['Token'] = csrf_token();
 		$data = $this->SetMemberInitialData($data);
+		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
 
 		return View::make('member/member-ewallet-withdrawal')->with($data);
 	}
@@ -211,6 +222,7 @@ class MemberController extends Controller
 		$data['Page'] = 'member-upgrade-entry';
 		$data['Token'] = csrf_token();
 		$data = $this->SetMemberInitialData($data);
+		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
 
 		$MemberEntry = new MemberEntry();
 		$data["MemberEntryInfo"] = $MemberEntry->getMemberEntryInfo(Session('MEMBER_ENTRY_ID'));
@@ -227,6 +239,7 @@ class MemberController extends Controller
 		$data['Page'] = 'member-vouchers';
 		$data['Token'] = csrf_token();
 		$data = $this->SetMemberInitialData($data);
+		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
 
 		return View::make('member/member-vouchers')->with($data);
 	}
@@ -240,6 +253,7 @@ class MemberController extends Controller
 		$data['Page'] = 'member-order-history';
 		$data['Token'] = csrf_token();
 		$data = $this->SetMemberInitialData($data);
+		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
 
 		return View::make('member/member-order-history')->with($data);
 	}
@@ -254,6 +268,7 @@ class MemberController extends Controller
 		$data['Page'] = 'change-password';
 		$data['Token'] = csrf_token();
 		$data = $this->SetMemberInitialData($data);
+		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
 
 		return View::make('member/change-password')->with($data);
 	}
@@ -375,6 +390,399 @@ class MemberController extends Controller
 		}
 		//end dynamic Compression
 
+
+		//Calculating
+		$cutoff1 = DB::table('memberentrycutoff as t1')
+			->join('memberentry as t2', 't1.MemberEntryID', '=', 't2.EntryID')
+			->join('packagerebates as t3', 't2.PackageID', '=', 't3.PackageID')
+			->join('packagerank as t4', 't2.PackageID', '=', 't4.PackageID')
+			->where('t1.EndDate', $genDate->toDateString())
+			->where('t1.TotalAcquiredRebatableValue', ">", 0)
+			->get();
+
+		foreach ($cutoff1 as $item) {
+			$maxLevel = 0;
+			//get maxlevel
+			$memberpurch = DB::table('memberentryorder')
+				->where('HeadEntryID', $item->MemberEntryID)
+				->orderBy('AccumulatedOrderID', 'desc')
+				->first();
+			if ($item->RankLevel1APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel1AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 1;
+			if ($item->RankLevel2APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel2AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 2;
+			if ($item->RankLevel3APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel3AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 3;
+			if ($item->RankLevel4APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel4AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 4;
+			if ($item->RankLevel5APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel5AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 5;
+			if ($item->RankLevel6APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel6AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 6;
+			if ($item->RankLevel7APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel7AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 7;
+			if ($item->RankLevel8APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel8AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 8;
+			if ($item->RankLevel9APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel9AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 9;
+			// end get maxlevel
+
+			//get decendant with maintainingbalance
+			$decendantWithMaintainingBalance = memberentrycutoff::join('member_tree', 'memberentrycutoff.MemberEntryID', '=', 'member_tree.descendant_id')
+				->where('EndDate', $genDate->toDateString())
+				->where(
+					'ancestor_id',
+					$item->MemberEntryID
+				)
+				->where('memberentrycutoff.TotalRebatableValue', '>=', 1500)
+				->orderBy('member_tree.depth')
+				->take(9)
+				->get();
+
+			$count = 0; //check per level
+			$dateNow = new Carbon();
+			foreach ($decendantWithMaintainingBalance as $decendant) {
+				if ($count <= $maxLevel) {
+					$rebatePercent = 1;
+					$rebate_msg = "";
+					if ($count == 0) {
+						$rebatePercent = $item->PersonalRebatesPercent;
+						$rebate_msg = "Personal Rebates";
+					};
+					if ($count == 1) {
+						$rebatePercent = $item->RebateLevel1Percent;
+						$rebate_msg = "Rebates Level 1";
+					};
+					if ($count == 2) {
+						$rebatePercent = $item->RebateLevel2Percent;
+						$rebate_msg = "Rebates Level 2";
+					};
+					if ($count == 3) {
+						$rebatePercent = $item->RebateLevel3Percent;
+						$rebate_msg = "Rebates Level 3";
+					};
+					if ($count == 4) {
+						$rebatePercent = $item->RebateLevel4Percent;
+						$rebate_msg = "Rebates Level 4";
+					};
+					if ($count == 5) {
+						$rebatePercent = $item->RebateLevel5Percent;
+						$rebate_msg = "Rebates Level 5";
+					};
+					if ($count == 6) {
+						$rebatePercent = $item->RebateLevel6Percent;
+						$rebate_msg = "Rebates Level 6";
+					};
+					if ($count == 7) {
+						$rebatePercent = $item->RebateLevel7Percent;
+						$rebate_msg = "Rebates Level 7";
+					};
+					if ($count == 8) {
+						$rebatePercent = $item->RebateLevel8Percent;
+						$rebate_msg = "Rebates Level 8";
+					};
+					if ($count == 9) {
+						$rebatePercent = $item->RebateLevel9Percent;
+						$rebate_msg = "Rebates Level 9";
+					};
+
+					$info = DB::table('ewalletledger')
+						->where('MemberID', $item->MemberEntryID)
+						->orderby('LedgerID', 'DESC')
+						->first();
+
+					$EWalletBalance = 0;
+					if (isset($info)) {
+						$EWalletBalance = $info->RunningBalance;
+					}
+					$INAmount = $decendant->TotalAcquiredRebatableValue * ($rebatePercent / 100);
+					DB::table('ewalletledger')->insert([
+						'ComplanID' => 4, // base on complan table
+						'MemberID' => $item->MemberEntryID,
+						'EarnedFromMemberID' => $item->MemberEntryID,
+						'LevelNo' => $count,
+						'DateTimeEarned' => $dateNow,
+						'EarnedMonth' => $dateNow->month,
+						'EarnedYear' => $dateNow->year,
+						'INAmount' => $INAmount,
+						'OUTAmount' => 0,
+						'OldBalance' => $EWalletBalance,
+						'RunningBalance' => ($EWalletBalance + $INAmount),
+						'Remarks' => $rebate_msg . ' for the month of ' . $genDate->month . '-' . $genDate->year,
+						'Status' => 'Approved',
+						'TransactionRefID' => $decendant->MemberEntryID,
+						'DateTimeCreated' => $dateNow,
+						'DateTimeUpdated' => $dateNow
+					]);
+
+					DB::table('memberentry')
+						->where('MemberID', $item->MemberEntryID)
+						->update(['AccumulatedRewards' => DB::raw('AccumulatedRewards + ' . $INAmount)]);
+				}
+				$count++;
+			}
+		}
+		return 'ok';
+	}
+	public function RabatesProjection($memberID)
+	{
+
+		//$initialMember = Member::where('MemberID', 2947)->first();
+		//return $this->buildTree(1168, "2023-04-30");
+		$genDate = new Carbon();
+		$genDate = $genDate->subMonth();
+		$genDate = $genDate->endOfMonth();
+
+		//Dynamic compression
+		$cutoff = DB::table('memberentrycutoff')
+			->where('EndDate', $genDate->toDateString())
+			->orderBy('MemberEntryID', 'desc')
+			->get();
+		foreach ($cutoff as $item) {
+
+			if ($item->TotalRebatableValue >= $item->MaintainingBalance) {
+				\Log::info('CutOffID: ' . $item->CutOffID);
+				\Log::info('MemberEntryID: ' . $item->MemberEntryID);
+				\Log::info('TotalAcquiredRebatableValue: ' . $item->TotalAcquiredRebatableValue);
+
+				$updateQuery = DB::table('memberentrycutoff')
+					->where('CutOffID', $item->CutOffID)
+					->update([
+						'AcquiredByEntryID' => $item->MemberEntryID,
+						'TotalAcquiredRebatableValue' => DB::raw('TotalAcquiredRebatableValue + ' . $item->TotalRebatableValue)
+					]);
+
+				\Log::info('Update Query: ' . $updateQuery);
+			} else {
+				$firstAncestorWithMaintainingBalance = memberentrycutoff::join('member_tree', 'memberentrycutoff.MemberEntryID', '=', 'member_tree.ancestor_id')
+					->where('EndDate', $genDate->toDateString())
+					->where('descendant_id', $item->MemberEntryID)
+					->where('memberentrycutoff.TotalRebatableValue', '>=', 1500)
+					->orderBy('member_tree.depth')
+					->first();
+
+				if ($firstAncestorWithMaintainingBalance) {
+					DB::table('memberentrycutoff')
+						->where('CutOffID', $firstAncestorWithMaintainingBalance->CutOffID)
+						->update([
+							'TotalAcquiredRebatableValue' => DB::raw('TotalAcquiredRebatableValue + ' . $item->TotalRebatableValue)
+						]);
+					$resultMemberID = $firstAncestorWithMaintainingBalance->MemberEntryID;
+				} else {
+					$resultMemberID = 1;
+				}
+				DB::table('memberentrycutoff')
+					->where('CutOffID', $item->CutOffID)
+					->update([
+						'AcquiredByEntryID' => $resultMemberID,
+					]);
+			}
+		}
+		//end dynamic Compression
+
+
+		//Calculating
+		$cutoff1 = DB::table('memberentrycutoff as t1')
+			->join('memberentry as t2', 't1.MemberEntryID', '=', 't2.EntryID')
+			->join('packagerebates as t3', 't2.PackageID', '=', 't3.PackageID')
+			->join('packagerank as t4', 't2.PackageID', '=', 't4.PackageID')
+			->where('t1.EndDate', $genDate->toDateString())
+			->where('t1.TotalAcquiredRebatableValue', ">", 0)
+			->get();
+
+		foreach ($cutoff1 as $item) {
+			$maxLevel = 0;
+			//get maxlevel
+			$memberpurch = DB::table('memberentryorder')
+				->where('HeadEntryID', $item->MemberEntryID)
+				->orderBy('AccumulatedOrderID', 'desc')
+				->first();
+			if ($item->RankLevel1APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel1AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 1;
+			if ($item->RankLevel2APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel2AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 2;
+			if ($item->RankLevel3APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel3AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 3;
+			if ($item->RankLevel4APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel4AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 4;
+			if ($item->RankLevel5APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel5AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 5;
+			if ($item->RankLevel6APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel6AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 6;
+			if ($item->RankLevel7APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel7AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 7;
+			if ($item->RankLevel8APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel8AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 8;
+			if ($item->RankLevel9APPRV <= $memberpurch->PersonalRunningBalance && $item->RankLevel9AGPRV  <= $memberpurch->GroupRunningBalance)
+				$maxLevel = 9;
+			// end get maxlevel
+
+			//get decendant with maintainingbalance
+			$decendantWithMaintainingBalance = memberentrycutoff::join('member_tree', 'memberentrycutoff.MemberEntryID', '=', 'member_tree.descendant_id')
+				->where('EndDate', $genDate->toDateString())
+				->where(
+					'ancestor_id',
+					$item->MemberEntryID
+				)
+				->where('memberentrycutoff.TotalRebatableValue', '>=', 1500)
+				->orderBy('member_tree.depth')
+				->take(9)
+				->get();
+
+			$count = 0; //check per level
+			$dateNow = new Carbon();
+			foreach ($decendantWithMaintainingBalance as $decendant) {
+				if ($count <= $maxLevel) {
+					$rebatePercent = 1;
+					$rebate_msg = "";
+					if ($count == 0) {
+						$rebatePercent = $item->PersonalRebatesPercent;
+						$rebate_msg = "Personal Rebates";
+					};
+					if ($count == 1) {
+						$rebatePercent = $item->RebateLevel1Percent;
+						$rebate_msg = "Rebates Level 1";
+					};
+					if ($count == 2) {
+						$rebatePercent = $item->RebateLevel2Percent;
+						$rebate_msg = "Rebates Level 2";
+					};
+					if ($count == 3) {
+						$rebatePercent = $item->RebateLevel3Percent;
+						$rebate_msg = "Rebates Level 3";
+					};
+					if ($count == 4) {
+						$rebatePercent = $item->RebateLevel4Percent;
+						$rebate_msg = "Rebates Level 4";
+					};
+					if ($count == 5) {
+						$rebatePercent = $item->RebateLevel5Percent;
+						$rebate_msg = "Rebates Level 5";
+					};
+					if ($count == 6) {
+						$rebatePercent = $item->RebateLevel6Percent;
+						$rebate_msg = "Rebates Level 6";
+					};
+					if ($count == 7) {
+						$rebatePercent = $item->RebateLevel7Percent;
+						$rebate_msg = "Rebates Level 7";
+					};
+					if ($count == 8) {
+						$rebatePercent = $item->RebateLevel8Percent;
+						$rebate_msg = "Rebates Level 8";
+					};
+					if ($count == 9) {
+						$rebatePercent = $item->RebateLevel9Percent;
+						$rebate_msg = "Rebates Level 9";
+					};
+
+					$info = DB::table('ewalletledger')
+						->where('MemberID', $item->MemberEntryID)
+						->orderby('LedgerID', 'DESC')
+						->first();
+
+					$EWalletBalance = 0;
+					if (isset($info)) {
+						$EWalletBalance = $info->RunningBalance;
+					}
+					$INAmount = $decendant->TotalAcquiredRebatableValue * ($rebatePercent / 100);
+					DB::table('ewalletledger')->insert([
+						'ComplanID' => 4, // base on complan table
+						'MemberID' => $item->MemberEntryID,
+						'EarnedFromMemberID' => $item->MemberEntryID,
+						'LevelNo' => $count,
+						'DateTimeEarned' => $dateNow,
+						'EarnedMonth' => $dateNow->month,
+						'EarnedYear' => $dateNow->year,
+						'INAmount' => $INAmount,
+						'OUTAmount' => 0,
+						'OldBalance' => $EWalletBalance,
+						'RunningBalance' => ($EWalletBalance + $INAmount),
+						'Remarks' => $rebate_msg . ' for the month of ' . $genDate->month . '-' . $genDate->year,
+						'Status' => 'Approved',
+						'TransactionRefID' => $decendant->MemberEntryID,
+						'DateTimeCreated' => $dateNow,
+						'DateTimeUpdated' => $dateNow
+					]);
+
+					DB::table('memberentry')
+						->where('MemberID', $item->MemberEntryID)
+						->update(['AccumulatedRewards' => DB::raw('AccumulatedRewards + ' . $INAmount)]);
+				}
+				$count++;
+			}
+		}
+		return 'ok';
+	}
+
+	public function generateWire($date)
+	{
+
+		//$initialMember = Member::where('MemberID', 2947)->first();
+		//return $this->buildTree(1168, "2023-04-30");
+		$genDate = new Carbon($date);
+		$dateNow = new Carbon();
+
+		$wirecode_active = wirecode_active::with('wirecode')
+			->where("start_date", "<=", $genDate)
+			->where("end_date", ">=", $genDate)
+			->first();
+		$wirecode = $wirecode_active->wirecode;
+
+		$member_activate_wire = member_activate_wire::with(['member'])
+			->where("wirecode_active_id", $wirecode_active->id)->get();
+
+		foreach ($member_activate_wire as $item) {
+			$maxLevel = $wirecode->max_level;
+			$ancestor_member_active_wire = member_activate_wire::join('member_tree', 'member_activate_wire.memberID', '=', 'member_tree.ancestor_id')
+				->where("wirecode_active_id", $wirecode_active->id)
+				->where(
+					'descendant_id',
+					$item->memberID
+				)
+				->orderBy('member_tree.depth')
+				->take($maxLevel + 1)
+				->get();
+			$count = 1;
+			//INSERT INTO `complan` (`ComplanID`, `Complan`, `Description`, `Status`, `DateTimeCreated`, `DateTimeUpdated`) 
+			//VALUES (NULL, 'Wirecode', 'Wirecode', 'Active', '2023-09-26 00:00:00', '2023-09-26 00:00:00');
+			foreach ($ancestor_member_active_wire as $ancestor) {
+
+				$info = DB::table('ewalletledger')
+					->where('MemberID', $ancestor->memberID)
+					->orderby('LedgerID', 'DESC')
+					->first();
+
+				$EWalletBalance = 0;
+				if (isset($info)) {
+					$EWalletBalance = $info->RunningBalance;
+				}
+				DB::table('ewalletledger')->insert([
+					'ComplanID' => 7, // base on complan table
+					'MemberID' => $ancestor->memberID,
+					'EarnedFromMemberID' => $item->memberID,
+					'LevelNo' => $count,
+					'DateTimeEarned' => $dateNow,
+					'EarnedMonth' => $dateNow->month,
+					'EarnedYear' => $dateNow->year,
+					'INAmount' => $wirecode->amount_acquired,
+					'OUTAmount' => 0,
+					'OldBalance' => $EWalletBalance,
+					'RunningBalance' => ($EWalletBalance + $wirecode->amount_acquired),
+					'Remarks' => 'Wirecode income Level ' . $count . ' for codewire',
+					'Status' => 'Approved',
+					'TransactionRefID' => $member_activate_wire->id,
+					'DateTimeCreated' => $dateNow,
+					'DateTimeUpdated' => $dateNow
+				]);
+
+				DB::table('memberentry')
+					->where('MemberID', $item->MemberEntryID)
+					->update(['AccumulatedRewards' => DB::raw('AccumulatedRewards + ' . $wirecode->amount_acquired)]);
+
+				$count++;
+			}
+		}
 		return 'ok';
 	}
 
@@ -466,19 +874,24 @@ class MemberController extends Controller
 		set_time_limit(0);
 		// $this->populateMemberTreeTable(1152, 1143, 1);
 		// return "ok kaau";
-		$existingMembers = MemberEntry::orderBy('SponsorEntryID', 'asc')->get();
+		$excludedIdsQuery = MemberTree::select('ancestor_id')
+			->groupBy('ancestor_id')
+			->get();
 
+		$excludedIds = $excludedIdsQuery->pluck('ancestor_id')->toArray();
+		//$existingMembers = MemberEntry::orderBy('SponsorEntryID', 'asc')->get();
+
+		$existingMembers = MemberEntry::whereNotIn('MemberID', $excludedIds)
+			->orderBy('SponsorEntryID', 'asc')
+			->get();
 		// Populate the member_tree table for each ancestor with their descendants
-		foreach ($existingMembers as $member) {
+		foreach ($existingMembers as $ancestor) {
 			// Check if the current member is an ancestor (sponsor)
-			if ($member->MemberID != $member->SponsorEntryID) {
+			if (!$ancestor->sponsor_id) {
 				// Process descendants of the current ancestor
-				$this->populateMemberTreeTable($member->SponsorEntryID, $member->MemberID, 1);
+				$this->populateMemberTreeTable($ancestor->MemberID, $ancestor->MemberID, 0);
 			}
 		}
-
-
-
 		return "ok kaau";
 	}
 	function populateMemberTreeTable($ancestorID, $descendantID, $depth)

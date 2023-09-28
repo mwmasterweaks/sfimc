@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
 
 use Mail;
 use Session;
@@ -24,33 +25,37 @@ use App\Models\SMS;
 use App\Models\CustomerCart;
 use App\Models\Personnel;
 use App\Models\Inventory;
+use App\Models\wirecode_active;
+use App\Models\member_activate_wire;
 use App\Models\GiftCertificate;
 
 class Order extends Model
 {
 
-    public function getOrderList($param){
+  protected $table = "order";
+  public function getOrderList($param)
+  {
 
-      $TODAY = date("Y-m-d H:i:s");
+    $TODAY = date("Y-m-d H:i:s");
 
-      $EntryID = $param['EntryID'];
+    $EntryID = $param['EntryID'];
 
-      $CenterID = $param['CenterID'];
-      $CustomerEntryID = $param['CustomerEntryID'];
-      $Status = $param['Status'];
-      $SearchText = trim($param['SearchText']);
-      $Limit = $param['Limit'];
-      $PageNo = $param['PageNo'];
+    $CenterID = $param['CenterID'];
+    $CustomerEntryID = $param['CustomerEntryID'];
+    $Status = $param['Status'];
+    $SearchText = trim($param['SearchText']);
+    $Limit = $param['Limit'];
+    $PageNo = $param['PageNo'];
 
-      ini_set('memory_limit', '999999M');
+    ini_set('memory_limit', '999999M');
 
-      $query = DB::table('order')
-        ->join('centers as ctr', 'ctr.CenterID', '=', 'order.CenterID')
-        ->join('countrycities as cty', 'cty.CityID', '=', 'order.CityID')
-        ->join('country as ctry', 'ctry.CountryID', '=', 'order.CountryID')
-        ->join('useraccount as apvby', 'order.ApprovedByID', '=', 'apvby.UserAccountID')
-        ->leftjoin('shipper', 'shipper.ShipperID', '=', 'order.ShipperID')
-        ->selectraw("
+    $query = DB::table('order')
+      ->join('centers as ctr', 'ctr.CenterID', '=', 'order.CenterID')
+      ->join('countrycities as cty', 'cty.CityID', '=', 'order.CityID')
+      ->join('country as ctry', 'ctry.CountryID', '=', 'order.CountryID')
+      ->join('useraccount as apvby', 'order.ApprovedByID', '=', 'apvby.UserAccountID')
+      ->leftjoin('shipper', 'shipper.ShipperID', '=', 'order.ShipperID')
+      ->selectraw("
             COALESCE(order.OrderID,0) as OrderID,
             COALESCE(order.OrderNo,'') as OrderNo,
             COALESCE(order.OrderDateTime,'') as OrderDateTime,
@@ -100,14 +105,14 @@ class Order extends Model
             COALESCE(order.SetPaidDateTime,'') as SetPaidDateTime,
 
             CASE
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_PENDING')."'  THEN 1
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_UNVERIFIED')."'  THEN 2
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_VERIFIED')."'  THEN 3
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_PACKED')."'  THEN 4
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_SHIPPED')."'  THEN 5
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_DELIVERED')."' THEN 6
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_RETURNED')."' THEN 7
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_CANCELLED')."' THEN 8
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_PENDING') . "'  THEN 1
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_UNVERIFIED') . "'  THEN 2
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_VERIFIED') . "'  THEN 3
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_PACKED') . "'  THEN 4
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_SHIPPED') . "'  THEN 5
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_DELIVERED') . "' THEN 6
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_RETURNED') . "' THEN 7
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_CANCELLED') . "' THEN 8
                 ELSE 0
             END as SortOption,
 
@@ -120,79 +125,80 @@ class Order extends Model
 
         ");
 
-      if($EntryID > 0){
-        $query->whereraw("COALESCE(order.CustomerEntryID,0) = ".$EntryID);
-      }
+    if ($EntryID > 0) {
+      $query->whereraw("COALESCE(order.CustomerEntryID,0) = " . $EntryID);
+    }
 
-      if($CenterID > 0){
-        $query->whereraw("COALESCE(order.CenterID,0) = ".$CenterID);
-      }
+    if ($CenterID > 0) {
+      $query->whereraw("COALESCE(order.CenterID,0) = " . $CenterID);
+    }
 
-      if($CustomerEntryID > 0){
-        $query->whereraw("COALESCE(order.CustomerEntryID,0) = ".$CustomerEntryID);
-      }
+    if ($CustomerEntryID > 0) {
+      $query->whereraw("COALESCE(order.CustomerEntryID,0) = " . $CustomerEntryID);
+    }
 
-      if($SearchText != ''){
-        $query->whereraw(
-            "CONCAT(
+    if ($SearchText != '') {
+      $query->whereraw(
+        "CONCAT(
             COALESCE(order.OrderNo,''),' ',
             COALESCE(order.CustomerName,''),' ',
             COALESCE(order.EmailAddress,''),' ',
             COALESCE(order.MobileNo,''),' ',
             COALESCE(order.Remarks,'')
-            ) like '%".str_replace("'", "''", $SearchText)."%'");
-      }
+            ) like '%" . str_replace("'", "''", $SearchText) . "%'"
+      );
+    }
 
-      if($Status != ''){
-        if($Status == config('app.STATUS_COLLECTED')){
-          $query->whereraw("COALESCE(order.Status,'') != '".config('app.STATUS_CANCELLED')."'");
-          $query->whereraw("COALESCE(order.Status,'') != '".config('app.STATUS_RETURNED')."'");
-          $query->whereraw("COALESCE(order.IsPaid,0) = 1");
-        }elseif($Status == config('app.STATUS_UNCOLLECTED')){
-          $query->whereraw("COALESCE(order.Status,'') != '".config('app.STATUS_CANCELLED')."'");
-          $query->whereraw("COALESCE(order.Status,'') != '".config('app.STATUS_RETURNED')."'");
-          $query->whereraw("COALESCE(order.IsPaid,0) = 0");
-        }else{
-          $query->where("order.Status",$Status);
-        }
+    if ($Status != '') {
+      if ($Status == config('app.STATUS_COLLECTED')) {
+        $query->whereraw("COALESCE(order.Status,'') != '" . config('app.STATUS_CANCELLED') . "'");
+        $query->whereraw("COALESCE(order.Status,'') != '" . config('app.STATUS_RETURNED') . "'");
+        $query->whereraw("COALESCE(order.IsPaid,0) = 1");
+      } elseif ($Status == config('app.STATUS_UNCOLLECTED')) {
+        $query->whereraw("COALESCE(order.Status,'') != '" . config('app.STATUS_CANCELLED') . "'");
+        $query->whereraw("COALESCE(order.Status,'') != '" . config('app.STATUS_RETURNED') . "'");
+        $query->whereraw("COALESCE(order.IsPaid,0) = 0");
+      } else {
+        $query->where("order.Status", $Status);
       }
+    }
 
-      if($Limit > 0){
-        $query->limit($Limit);
-        $query->offset(($PageNo-1) * $Limit);
-      }
+    if ($Limit > 0) {
+      $query->limit($Limit);
+      $query->offset(($PageNo - 1) * $Limit);
+    }
 
-      $query->orderByraw("(CASE
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_PENDING')."'  THEN 1
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_UNVERIFIED')."'  THEN 2
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_VERIFIED')."'  THEN 3
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_PACKED')."'  THEN 4
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_SHIPPED')."'  THEN 5
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_DELIVERED')."' THEN 6
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_RETURNED')."' THEN 7
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_CANCELLED')."' THEN 8
+    $query->orderByraw("(CASE
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_PENDING') . "'  THEN 1
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_UNVERIFIED') . "'  THEN 2
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_VERIFIED') . "'  THEN 3
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_PACKED') . "'  THEN 4
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_SHIPPED') . "'  THEN 5
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_DELIVERED') . "' THEN 6
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_RETURNED') . "' THEN 7
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_CANCELLED') . "' THEN 8
                 ELSE 0
             END) ASC");
 
-     $query->orderByraw("COALESCE(order.OrderDateTime,'') DESC");
+    $query->orderByraw("COALESCE(order.OrderDateTime,'') DESC");
 
-      $list = $query->get();
+    $list = $query->get();
 
-      return $list;
+    return $list;
+  }
 
-    }
+  public function getOrderInfo($OrderID)
+  {
 
-    public function getOrderInfo($OrderID){
+    $TODAY = date("Y-m-d H:i:s");
 
-      $TODAY = date("Y-m-d H:i:s");
-
-      $info = DB::table('order')
-        ->join('centers as ctr', 'ctr.CenterID', '=', 'order.CenterID')
-        ->join('countrycities as cty', 'cty.CityID', '=', 'order.CityID')
-        ->join('country as ctry', 'ctry.CountryID', '=', 'order.CountryID')
-        ->join('useraccount as apvby', 'order.ApprovedByID', '=', 'apvby.UserAccountID')
-        ->leftjoin('shipper', 'shipper.ShipperID', '=', 'order.ShipperID')
-        ->selectraw("
+    $info = DB::table('order')
+      ->join('centers as ctr', 'ctr.CenterID', '=', 'order.CenterID')
+      ->join('countrycities as cty', 'cty.CityID', '=', 'order.CityID')
+      ->join('country as ctry', 'ctry.CountryID', '=', 'order.CountryID')
+      ->join('useraccount as apvby', 'order.ApprovedByID', '=', 'apvby.UserAccountID')
+      ->leftjoin('shipper', 'shipper.ShipperID', '=', 'order.ShipperID')
+      ->selectraw("
             COALESCE(order.OrderID,0) as OrderID,
             COALESCE(order.OrderNo,'') as OrderNo,
             COALESCE(order.OrderDateTime,'') as OrderDateTime,
@@ -245,14 +251,14 @@ class Order extends Model
             COALESCE(order.SetPaidDateTime,'') as SetPaidDateTime,
 
             CASE
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_PENDING')."'  THEN 1
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_UNVERIFIED')."'  THEN 2
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_VERIFIED')."'  THEN 3
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_PACKED')."'  THEN 4
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_SHIPPED')."'  THEN 5
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_DELIVERED')."' THEN 6
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_RETURNED')."' THEN 7
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_CANCELLED')."' THEN 8
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_PENDING') . "'  THEN 1
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_UNVERIFIED') . "'  THEN 2
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_VERIFIED') . "'  THEN 3
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_PACKED') . "'  THEN 4
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_SHIPPED') . "'  THEN 5
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_DELIVERED') . "' THEN 6
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_RETURNED') . "' THEN 7
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_CANCELLED') . "' THEN 8
                 ELSE 0
             END as SortOption,
 
@@ -264,24 +270,24 @@ class Order extends Model
             COALESCE(order.DateTimeUpdated,'') as DateTimeUpdated
 
         ")
-        ->where('order.OrderID',$OrderID)
-        ->first();
+      ->where('order.OrderID', $OrderID)
+      ->first();
 
-      return $info;
+    return $info;
+  }
 
-    }
+  public function getOrderInfoByOrderNo($OrderNo)
+  {
 
-    public function getOrderInfoByOrderNo($OrderNo){
+    $TODAY = date("Y-m-d H:i:s");
 
-      $TODAY = date("Y-m-d H:i:s");
-
-      $info = DB::table('order')
-        ->join('centers as ctr', 'ctr.CenterID', '=', 'order.CenterID')
-        ->join('countrycities as cty', 'cty.CityID', '=', 'order.CityID')
-        ->join('country as ctry', 'ctry.CountryID', '=', 'order.CountryID')
-        ->join('useraccount as apvby', 'order.ApprovedByID', '=', 'apvby.UserAccountID')
-        ->leftjoin('shipper', 'shipper.ShipperID', '=', 'order.ShipperID')
-        ->selectraw("
+    $info = DB::table('order')
+      ->join('centers as ctr', 'ctr.CenterID', '=', 'order.CenterID')
+      ->join('countrycities as cty', 'cty.CityID', '=', 'order.CityID')
+      ->join('country as ctry', 'ctry.CountryID', '=', 'order.CountryID')
+      ->join('useraccount as apvby', 'order.ApprovedByID', '=', 'apvby.UserAccountID')
+      ->leftjoin('shipper', 'shipper.ShipperID', '=', 'order.ShipperID')
+      ->selectraw("
             COALESCE(order.OrderID,0) as OrderID,
             COALESCE(order.OrderNo,'') as OrderNo,
             COALESCE(order.OrderDateTime,'') as OrderDateTime,
@@ -331,14 +337,14 @@ class Order extends Model
             COALESCE(order.SetPaidDateTime,'') as SetPaidDateTime,
 
             CASE
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_PENDING')."'  THEN 1
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_UNVERIFIED')."'  THEN 2
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_VERIFIED')."'  THEN 3
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_PACKED')."'  THEN 4
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_SHIPPED')."'  THEN 5
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_DELIVERED')."' THEN 6
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_RETURNED')."' THEN 7
-                WHEN COALESCE(order.Status,'') = '".config('app.STATUS_CANCELLED')."' THEN 8
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_PENDING') . "'  THEN 1
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_UNVERIFIED') . "'  THEN 2
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_VERIFIED') . "'  THEN 3
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_PACKED') . "'  THEN 4
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_SHIPPED') . "'  THEN 5
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_DELIVERED') . "' THEN 6
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_RETURNED') . "' THEN 7
+                WHEN COALESCE(order.Status,'') = '" . config('app.STATUS_CANCELLED') . "' THEN 8
                 ELSE 0
             END as SortOption,
 
@@ -350,81 +356,81 @@ class Order extends Model
             COALESCE(order.DateTimeUpdated,'') as DateTimeUpdated
 
         ")
-        ->where('order.OrderNo','=',$OrderNo)
-        ->first();
+      ->where('order.OrderNo', '=', $OrderNo)
+      ->first();
 
-      return $info;
+    return $info;
+  }
 
+  public function doSaveUpdateOrder($data)
+  {
+
+    $Misc  = new Misc();
+    $MemberEntry  = new MemberEntry();
+
+    $TODAY = date("Y-m-d H:i:s");
+
+    $CenterID = $data['CenterID'];
+    $OrderID = $data['OrderID'];
+
+    $CustomerType = $data['CustomerType'];
+    $CustomerEntryID = $data['CustomerEntryID'];
+    $CustomerName = $data['CustomerName'];
+    $EmailAddress = $data['EmailAddress'];
+    $MobileNo = $data['MobileNo'];
+
+    $Address = $data['Address'];
+    $CityID = $data['CityID'];
+    $StateProvince = $data['StateProvince'];
+    $ZipCode = $data['ZipCode'];
+    $CountryID = $data['CountryID'];
+
+    if ($CustomerEntryID > 0) {
+      $MemberEntryInfo = $MemberEntry->getMemberEntryInfo($CustomerEntryID);
+      if (isset($MemberEntryInfo)) {
+        $CustomerName = $MemberEntryInfo->MemberName;
+        $EmailAddress = (empty($EmailAddress) ? $MemberEntryInfo->EmailAddress : $EmailAddress);
+        $MobileNo = (empty($MobileNo) ? $MemberEntryInfo->MobileNo : $MobileNo);
+      }
     }
 
-    public function doSaveUpdateOrder($data){
+    $GrossTotal = $data['GrossTotal'];
+    $ShippingCharges = $data['ShippingCharges'];
+    $TotalDiscountPercent = $data['TotalDiscountPercent'];
+    $TotalDiscountAmount = $data['TotalDiscountAmount'];
+    $TotalAmountDue = $data['TotalAmountDue'];
 
-      $Misc  = new Misc();
-      $MemberEntry  = new MemberEntry();
+    $ShipperID = $data['ShipperID'];
 
-      $TODAY = date("Y-m-d H:i:s");
+    $ModeOfPayment = $data['ModeOfPayment'];
+    $TotalVoucherPayment = $data['TotalVoucherPayment'];
+    $TotalEWalletPayment = $data['TotalEWalletPayment'];
+    $TotalCashPayment = $data['TotalCashPayment'];
+    $AmountChange = $data['AmountChange'];
+    $TotalRebatableValue = $data['TotalRebatableValue'];
 
-      $CenterID = $data['CenterID'];
-      $OrderID = $data['OrderID'];
+    $ApprovedByID = $data['ApprovedByID'];
+    $CreatedByID = $data['CreatedByID'];
+    $UpdatedByID = $data['UpdatedByID'];
 
-      $CustomerType = $data['CustomerType'];  
-      $CustomerEntryID = $data['CustomerEntryID'];  
-      $CustomerName = $data['CustomerName'];
-      $EmailAddress = $data['EmailAddress'];
-      $MobileNo = $data['MobileNo'];
+    $Remarks = $data['Remarks'];
+    $Status = $data['Status'];
 
-      $Address = $data['Address'];
-      $CityID = $data['CityID'];
-      $StateProvince = $data['StateProvince'];
-      $ZipCode = $data['ZipCode'];
-      $CountryID = $data['CountryID'];
+    if ($OrderID > 0) {
+      //Revert Order Items
+      //$this->doRevertOrderItems($OrderID, "Edit");
 
-      if($CustomerEntryID > 0){
-          $MemberEntryInfo = $MemberEntry->getMemberEntryInfo($CustomerEntryID);
-          if(isset($MemberEntryInfo)){
-            $CustomerName = $MemberEntryInfo->MemberName;
-            $EmailAddress = (empty($EmailAddress) ? $MemberEntryInfo->EmailAddress : $EmailAddress);
-            $MobileNo = (empty($MobileNo) ? $MemberEntryInfo->MobileNo : $MobileNo);
-          }
-      }
-
-      $GrossTotal = $data['GrossTotal'];
-      $ShippingCharges = $data['ShippingCharges'];
-      $TotalDiscountPercent = $data['TotalDiscountPercent'];
-      $TotalDiscountAmount = $data['TotalDiscountAmount'];
-      $TotalAmountDue = $data['TotalAmountDue'];
-
-      $ShipperID = $data['ShipperID'];
-
-      $ModeOfPayment = $data['ModeOfPayment'];
-      $TotalVoucherPayment = $data['TotalVoucherPayment'];
-      $TotalEWalletPayment = $data['TotalEWalletPayment'];
-      $TotalCashPayment = $data['TotalCashPayment'];
-      $AmountChange = $data['AmountChange'];
-      $TotalRebatableValue = $data['TotalRebatableValue'];
-
-      $ApprovedByID = $data['ApprovedByID'];
-      $CreatedByID = $data['CreatedByID'];
-      $UpdatedByID = $data['UpdatedByID'];
-
-      $Remarks = $data['Remarks'];
-      $Status = $data['Status'];
-
-      if($OrderID > 0){
-        //Revert Order Items
-        //$this->doRevertOrderItems($OrderID, "Edit");
-
-        DB::table('order')
-          ->where('OrderID',$OrderID)
-          ->update([
+      DB::table('order')
+        ->where('OrderID', $OrderID)
+        ->update([
 
           'CenterID' => $CenterID,
 
           'CustomerType' => $CustomerType,
           'CustomerEntryID' => $CustomerEntryID,
 
-          'CustomerName'=> $CustomerName,
-          'EmailAddress'=> $EmailAddress,
+          'CustomerName' => $CustomerName,
+          'EmailAddress' => $EmailAddress,
           'MobileNo' => $MobileNo,
 
           'Address' => $Address,
@@ -433,46 +439,45 @@ class Order extends Model
           'ZipCode' => $ZipCode,
           'CountryID' => $CountryID,
 
-          'GrossTotal'=> $GrossTotal,
-          'ShippingCharges'=> $ShippingCharges,
-          'TotalDiscountPercent'=> $TotalDiscountPercent,          
-          'TotalDiscountAmount'=> $TotalDiscountAmount,
+          'GrossTotal' => $GrossTotal,
+          'ShippingCharges' => $ShippingCharges,
+          'TotalDiscountPercent' => $TotalDiscountPercent,
+          'TotalDiscountAmount' => $TotalDiscountAmount,
           'TotalAmountDue' => $TotalAmountDue,
 
           'ShipperID' => $ShipperID,
 
           'ModeOfPayment' => $ModeOfPayment,
           'TotalVoucherPayment' => $TotalVoucherPayment,
-          'TotalEWalletPayment'=> $TotalEWalletPayment,
-          'TotalCashPayment'=> $TotalCashPayment,
-          'AmountChange'=> $AmountChange,
-          'TotalRebatableValue'=> $TotalRebatableValue,
+          'TotalEWalletPayment' => $TotalEWalletPayment,
+          'TotalCashPayment' => $TotalCashPayment,
+          'AmountChange' => $AmountChange,
+          'TotalRebatableValue' => $TotalRebatableValue,
 
-          'Remarks'=> $Remarks,
+          'Remarks' => $Remarks,
 
-          'ApprovedByID'=> $ApprovedByID,
-          'ApprovedDateTime' =>$TODAY,
+          'ApprovedByID' => $ApprovedByID,
+          'ApprovedDateTime' => $TODAY,
 
-          'UpdatedByID'=> $UpdatedByID,
-          'DateTimeUpdated' =>$TODAY
+          'UpdatedByID' => $UpdatedByID,
+          'DateTimeUpdated' => $TODAY
         ]);
 
-        //Save Transaction Log
-        $logData['TransRefID'] = $OrderID;
-        $logData['TransactedByID'] = $UpdatedByID;
-        $logData['ModuleType'] = "Order";
-        $logData['TransType'] = "Update Order Information";
-        $logData['Remarks'] = "";
-        $Misc->doSaveTransactionLog($logData);
+      //Save Transaction Log
+      $logData['TransRefID'] = $OrderID;
+      $logData['TransactedByID'] = $UpdatedByID;
+      $logData['ModuleType'] = "Order";
+      $logData['TransType'] = "Update Order Information";
+      $logData['Remarks'] = "";
+      $Misc->doSaveTransactionLog($logData);
+    } else {
 
-      }else{
+      $OrderNo = $Misc->GenerateRandomNo(6, 'order', 'OrderNo');
 
-        $OrderNo = $Misc->GenerateRandomNo(6,'order','OrderNo');
+      $Status = config('app.STATUS_UNVERIFIED');
+      $Source = config('app.SOURCE_ADMIN');
 
-        $Status = config('app.STATUS_UNVERIFIED');
-        $Source = config('app.SOURCE_ADMIN');
-
-        $OrderID =  DB::table('order')
+      $OrderID =  DB::table('order')
         ->insertGetId([
 
           'CenterID' => $CenterID,
@@ -483,8 +488,8 @@ class Order extends Model
           'CustomerType' => $CustomerType,
           'CustomerEntryID' => $CustomerEntryID,
 
-          'CustomerName'=> $CustomerName,
-          'EmailAddress'=> $EmailAddress,
+          'CustomerName' => $CustomerName,
+          'EmailAddress' => $EmailAddress,
           'MobileNo' => $MobileNo,
 
           'Address' => $Address,
@@ -493,168 +498,166 @@ class Order extends Model
           'ZipCode' => $ZipCode,
           'CountryID' => $CountryID,
 
-          'GrossTotal'=> $GrossTotal,
-          'ShippingCharges'=> $ShippingCharges,
-          'TotalDiscountPercent'=> $TotalDiscountPercent,          
-          'TotalDiscountAmount'=> $TotalDiscountAmount,
+          'GrossTotal' => $GrossTotal,
+          'ShippingCharges' => $ShippingCharges,
+          'TotalDiscountPercent' => $TotalDiscountPercent,
+          'TotalDiscountAmount' => $TotalDiscountAmount,
           'TotalAmountDue' => $TotalAmountDue,
 
           'ShipperID' => $ShipperID,
 
           'ModeOfPayment' => $ModeOfPayment,
           'TotalVoucherPayment' => $TotalVoucherPayment,
-          'TotalEWalletPayment'=> $TotalEWalletPayment,
-          'TotalCashPayment'=> $TotalCashPayment,
-          'AmountChange'=> $AmountChange,
-          'TotalRebatableValue'=> $TotalRebatableValue,
+          'TotalEWalletPayment' => $TotalEWalletPayment,
+          'TotalCashPayment' => $TotalCashPayment,
+          'AmountChange' => $AmountChange,
+          'TotalRebatableValue' => $TotalRebatableValue,
 
-          'Remarks'=> $Remarks,
-          'Status'=> $Status,
+          'Remarks' => $Remarks,
+          'Status' => $Status,
 
-          'Source'=> $Source,
+          'Source' => $Source,
 
-          'ApprovedByID'=> $ApprovedByID,
-          'ApprovedDateTime' =>$TODAY,
+          'ApprovedByID' => $ApprovedByID,
+          'ApprovedDateTime' => $TODAY,
 
-          'CreatedByID'=> $CreatedByID,
-          'DateTimeCreated' =>$TODAY,
+          'CreatedByID' => $CreatedByID,
+          'DateTimeCreated' => $TODAY,
 
-          'UpdatedByID'=> $UpdatedByID,
-          'DateTimeUpdated' =>$TODAY
+          'UpdatedByID' => $UpdatedByID,
+          'DateTimeUpdated' => $TODAY
 
         ]);
 
-        //Vouchers
-        if($CustomerEntryID > 0){
-          $VoucherData = $data['VoucherData'];
-          if(!empty($VoucherData)){
+      //Vouchers
+      if ($CustomerEntryID > 0) {
+        $VoucherData = $data['VoucherData'];
+        if (!empty($VoucherData)) {
 
-            for($x=0; $x< count($VoucherData); $x++) {
-              $VoucherID = $VoucherData[$x]["VoucherID"];
+          for ($x = 0; $x < count($VoucherData); $x++) {
+            $VoucherID = $VoucherData[$x]["VoucherID"];
 
-              $ID =  DB::table('ordervoucher')
-                  ->insertGetId([
-                    'OrderID' => $OrderID,
-                    'VoucherID' => $VoucherID
-                  ]);
+            $ID =  DB::table('ordervoucher')
+              ->insertGetId([
+                'OrderID' => $OrderID,
+                'VoucherID' => $VoucherID
+              ]);
 
-              //Update voucher Status
-              DB::table('membervoucher')
-                ->where('VoucherID',$VoucherID)
-                ->update([
+            //Update voucher Status
+            DB::table('membervoucher')
+              ->where('VoucherID', $VoucherID)
+              ->update([
                 'Status' => config('app.STATUS_USED'),
                 'UsedByEntryID' => $CustomerEntryID,
                 'UsedByOrderID' => $OrderID,
                 'OwnedByCenterID' => $CenterID
               ]);
-
-            }
           }
         }
-
-        //Save Transaction Log
-        $logData['TransRefID'] = $OrderID;
-        $logData['TransactedByID'] = $CreatedByID;
-        $logData['ModuleType'] = "Order";
-        $logData['TransType'] = "New Order";
-        $logData['Remarks'] = "";
-        $Misc->doSaveTransactionLog($logData);
-
-        $data['OrderID'] = $OrderID;
       }
 
-      $Result = $this->doSaveUpdateOrderItems($data);
+      //Save Transaction Log
+      $logData['TransRefID'] = $OrderID;
+      $logData['TransactedByID'] = $CreatedByID;
+      $logData['ModuleType'] = "Order";
+      $logData['TransType'] = "New Order";
+      $logData['Remarks'] = "";
+      $Misc->doSaveTransactionLog($logData);
 
-      return $OrderID;
-
+      $data['OrderID'] = $OrderID;
     }
 
-    public function doSaveUpdateOrderItems($data){
+    $Result = $this->doSaveUpdateOrderItems($data);
 
-      $TODAY = date("Y-m-d H:i:s");
+    return $OrderID;
+  }
 
-      $Product = new Product();
+  public function doSaveUpdateOrderItems($data)
+  {
 
-      $OrderID = $data['OrderID'];
-      $CenterID = $data['CenterID'];
-      $OrderItems = $data['OrderItems'];
-      $OrderItemsDeleted = $data['OrderItemsDeleted'];
+    $TODAY = date("Y-m-d H:i:s");
 
-      if(!empty($OrderItemsDeleted)){
+    $Product = new Product();
 
-        //Deleted Supplier Products
-        for($x=0; $x< count($OrderItemsDeleted); $x++) {
-          DB::table('orderitem')
-            ->where('OrderItemID', '=',$OrderItemsDeleted[$x])
-            ->delete();
-        }
+    $OrderID = $data['OrderID'];
+    $CenterID = $data['CenterID'];
+    $OrderItems = $data['OrderItems'];
+    $OrderItemsDeleted = $data['OrderItemsDeleted'];
+
+    if (!empty($OrderItemsDeleted)) {
+
+      //Deleted Supplier Products
+      for ($x = 0; $x < count($OrderItemsDeleted); $x++) {
+        DB::table('orderitem')
+          ->where('OrderItemID', '=', $OrderItemsDeleted[$x])
+          ->delete();
       }
+    }
 
-      if(!empty($OrderItems)){
+    if (!empty($OrderItems)) {
 
-        for($x=0; $x< count($OrderItems); $x++) {
-          
-          $OrderItemID = $OrderItems[$x]["OrderItemID"];
+      for ($x = 0; $x < count($OrderItems); $x++) {
 
-          $ProductID = $OrderItems[$x]["ProductID"];
-          $Qty = $OrderItems[$x]["Qty"];
-          $Price = $OrderItems[$x]["Price"];
-          $SubTotal = $OrderItems[$x]["SubTotal"];
-          $RebatableValue = $OrderItems[$x]["RebatableValue"];
+        $OrderItemID = $OrderItems[$x]["OrderItemID"];
 
-          if($OrderItemID > 0){
-              if($ProductID > 0){
-                DB::table('orderitem')
-                ->where('OrderItemID',$OrderItemID)
-                ->update([
-                  'OrderID' => $OrderID,
-                  'ProductID' => $ProductID,
-                  'Qty' => $Qty,
-                  'Price' => $Price,
-                  'SubTotal' => $SubTotal,
-                  'RebatableValue' => $RebatableValue,
-                  'DateTimeUpdated' =>$TODAY
-                ]);
-              }
-          }else{
-              if($ProductID > 0){
-                $OrderItemID =  DB::table('orderitem')
-                  ->insertGetId([
-                      'OrderID' => $OrderID,
-                      'ProductID' => $ProductID,
-                      'Qty' => $Qty,
-                      'Price' => $Price,
-                      'SubTotal' => $SubTotal,
-                      'RebatableValue' => $RebatableValue,
-                      'DateTimeCreated' =>$TODAY,
-                      'DateTimeUpdated' =>$TODAY
-                  ]);
-              }
+        $ProductID = $OrderItems[$x]["ProductID"];
+        $Qty = $OrderItems[$x]["Qty"];
+        $Price = $OrderItems[$x]["Price"];
+        $SubTotal = $OrderItems[$x]["SubTotal"];
+        $RebatableValue = $OrderItems[$x]["RebatableValue"];
+
+        if ($OrderItemID > 0) {
+          if ($ProductID > 0) {
+            DB::table('orderitem')
+              ->where('OrderItemID', $OrderItemID)
+              ->update([
+                'OrderID' => $OrderID,
+                'ProductID' => $ProductID,
+                'Qty' => $Qty,
+                'Price' => $Price,
+                'SubTotal' => $SubTotal,
+                'RebatableValue' => $RebatableValue,
+                'DateTimeUpdated' => $TODAY
+              ]);
+          }
+        } else {
+          if ($ProductID > 0) {
+            $OrderItemID =  DB::table('orderitem')
+              ->insertGetId([
+                'OrderID' => $OrderID,
+                'ProductID' => $ProductID,
+                'Qty' => $Qty,
+                'Price' => $Price,
+                'SubTotal' => $SubTotal,
+                'RebatableValue' => $RebatableValue,
+                'DateTimeCreated' => $TODAY,
+                'DateTimeUpdated' => $TODAY
+              ]);
           }
         }
-
       }
-
-      return "Success";
-
     }
 
-    public function getOrderItemList($param){
+    return "Success";
+  }
 
-      $TODAY = date("Y-m-d H:i:s");
+  public function getOrderItemList($param)
+  {
 
-      $OrderID = $param['OrderID'];
+    $TODAY = date("Y-m-d H:i:s");
 
-      ini_set('memory_limit', '999999M');
+    $OrderID = $param['OrderID'];
 
-      $query = DB::table('orderitem as oi')
-        ->join('order', 'order.OrderID', '=', 'oi.OrderID')
-        ->join('product', 'product.ProductID', '=', 'oi.ProductID')
-        ->join("productinventory as inv",function($join){
-            $join->on('inv.CenterID', '=', 'order.CenterID')
-                 ->on('inv.ProductID', '=', 'oi.ProductID');
-        })        
-        ->selectraw("
+    ini_set('memory_limit', '999999M');
+
+    $query = DB::table('orderitem as oi')
+      ->join('order', 'order.OrderID', '=', 'oi.OrderID')
+      ->join('product', 'product.ProductID', '=', 'oi.ProductID')
+      ->join("productinventory as inv", function ($join) {
+        $join->on('inv.CenterID', '=', 'order.CenterID')
+          ->on('inv.ProductID', '=', 'oi.ProductID');
+      })
+      ->selectraw("
             COALESCE(oi.OrderItemID,0) as OrderItemID,
             COALESCE(oi.OrderID,0) as OrderID,
             COALESCE(oi.ProductID,0) as ProductID,
@@ -669,27 +672,27 @@ class Order extends Model
             COALESCE(oi.Price,0) as Price,
             COALESCE(oi.SubTotal,0) as SubTotal
         ")
-        ->where('oi.OrderID',$OrderID);
+      ->where('oi.OrderID', $OrderID);
 
-      $query->orderBy("product.ProductName","ASC");
+    $query->orderBy("product.ProductName", "ASC");
 
-      $list = $query->get();
+    $list = $query->get();
 
-      return $list;
+    return $list;
+  }
 
-    }
+  public function getOrderVoucherList($param)
+  {
 
-    public function getOrderVoucherList($param){
+    $TODAY = date("Y-m-d H:i:s");
 
-      $TODAY = date("Y-m-d H:i:s");
+    $OrderID = $param['OrderID'];
 
-      $OrderID = $param['OrderID'];
+    ini_set('memory_limit', '999999M');
 
-      ini_set('memory_limit', '999999M');
-
-      $query = DB::table('ordervoucher as ov')
-        ->join('membervoucher as mv', 'ov.VoucherID', '=', 'mv.VoucherID')
-        ->selectraw("
+    $query = DB::table('ordervoucher as ov')
+      ->join('membervoucher as mv', 'ov.VoucherID', '=', 'mv.VoucherID')
+      ->selectraw("
             COALESCE(ov.ID,0) as ID,
             COALESCE(ov.OrderID,0) as OrderID,
             COALESCE(ov.VoucherID,0) as VoucherID,
@@ -697,464 +700,486 @@ class Order extends Model
             COALESCE(mv.NthPair,0) as NthPair,
             COALESCE(mv.VoucherAmount,'') as VoucherAmount
         ")
-        ->where('ov.OrderID',$OrderID);
+      ->where('ov.OrderID', $OrderID);
 
-      $query->orderBy("mv.NthPair","ASC");
+    $query->orderBy("mv.NthPair", "ASC");
 
-      $list = $query->get();
+    $list = $query->get();
 
-      return $list;
+    return $list;
+  }
 
-    }
+  public function doPaidOrder($data)
+  {
 
-    public function doPaidOrder($data){
+    $TODAY = date("Y-m-d H:i:s");
 
-      $TODAY = date("Y-m-d H:i:s");
+    $Misc = new Misc();
 
-      $Misc = new Misc();
+    $OrderID = $data['OrderID'];
+    $SetPaidByID = $data['SetPaidByID'];
 
-      $OrderID =$data['OrderID'];
-      $SetPaidByID = $data['SetPaidByID'];
-
-      if($OrderID > 0){
-        DB::table('order')
-        ->where('OrderID',$OrderID)
+    if ($OrderID > 0) {
+      DB::table('order')
+        ->where('OrderID', $OrderID)
         ->update([
           'IsPaid' => 1,
           'SetPaidByID' => $SetPaidByID,
-          'SetPaidDateTime' =>$TODAY
+          'SetPaidDateTime' => $TODAY
         ]);
 
-        $data['OrderID'] = $OrderID;
+      $data['OrderID'] = $OrderID;
 
+      $order_data = DB::table('order')
+        ->where('OrderID', $OrderID)->first();
+      //if (!($order_data !== null && $order_data->TotalVoucherPayment > 0)) {
+      if (!($order_data->TotalVoucherPayment > 0)) {
         //Distribute For Personal And Group Purchases
-        DB::statement("call spSetAccumulatedOrder(".$OrderID.",'".$TODAY."')");
-
-        //Save Transaction Log
-        $logData['TransRefID'] = $OrderID;
-        $logData['TransactedByID'] = $SetPaidByID;
-        $logData['ModuleType'] = "Order";
-        $logData['TransType'] = "Order Set As Paid";
-        $logData['Remarks'] = "";
-        $Misc->doSaveTransactionLog($logData);
-
+        $this->wirecode_checker($OrderID, $order_data->CustomerEntryID);
+        DB::statement("call spSetAccumulatedOrder(" . $OrderID . ",'" . $TODAY . "')");
       }
-
-      return $OrderID;
-
+      //Save Transaction Log
+      $logData['TransRefID'] = $OrderID;
+      $logData['TransactedByID'] = $SetPaidByID;
+      $logData['ModuleType'] = "Order";
+      $logData['TransType'] = "Order Set As Paid";
+      $logData['Remarks'] = "";
+      $Misc->doSaveTransactionLog($logData);
     }
 
-    public function doCancelOrder($data){
+    return $OrderID;
+  }
 
-      $TODAY = date("Y-m-d H:i:s");
+  public function wirecode_checker($OrderID, $memberID)
+  {
+    $datenow = new Carbon();
+    //get active wire code
+    $active_wire = wirecode_active::with(["wirecode"])
+      ->where('start_date', "<=", $datenow->toDateString())
+      ->where('end_date', ">=", $datenow->toDateString())
+      ->first();
+    $wirecode = $active_wire->wirecode;
 
-      $OrderID =$data['OrderID'];
-      $CancelledByID = $data['CancelledByID'];
-      $Reason = $data['Reason'];
+    //check if meet the required wirecode
+    $orderitems = DB::table('orderitem')
+      ->where('OrderID', $OrderID)
+      ->where('ProductID', $wirecode->productID)
+      ->where('Qty', ">=", $wirecode->minimum_qty)
+      ->get();
+    if (!$orderitems->isEmpty()) {
+      $member_activate_wire = new member_activate_wire;
+      $member_activate_wire->memberID = $memberID;
+      $member_activate_wire->wirecode_activate_id = $active_wire->id;
+      $member_activate_wire->orderID = $OrderID;
+      //$member_activate_wire->timestamps = false;
+      $member_activate_wire->save();
+    }
+  }
 
-      if($OrderID > 0){
-        DB::table('order')
-        ->where('OrderID',$OrderID)
+  public function doCancelOrder($data)
+  {
+
+    $TODAY = date("Y-m-d H:i:s");
+
+    $OrderID = $data['OrderID'];
+    $CancelledByID = $data['CancelledByID'];
+    $Reason = $data['Reason'];
+
+    if ($OrderID > 0) {
+      DB::table('order')
+        ->where('OrderID', $OrderID)
         ->update([
           'CancelledByID' => $CancelledByID,
           'CancellationReason' => $Reason,
           'Status' => config('app.STATUS_CANCELLED'),
-          'DateTimeUpdated' =>$TODAY
+          'DateTimeUpdated' => $TODAY
         ]);
 
-        //Save Transaction Log
-        $Misc = new Misc();
-        $logData['TransRefID'] = $OrderID;
-        $logData['TransactedByID'] = $CancelledByID;
-        $logData['ModuleType'] = "Order";
-        $logData['TransType'] = "Order Cancelled";
-        $logData['Remarks'] = $Reason;
-        $Misc->doSaveTransactionLog($logData);
-
-      }
-
-      return $OrderID;
-
+      //Save Transaction Log
+      $Misc = new Misc();
+      $logData['TransRefID'] = $OrderID;
+      $logData['TransactedByID'] = $CancelledByID;
+      $logData['ModuleType'] = "Order";
+      $logData['TransType'] = "Order Cancelled";
+      $logData['Remarks'] = $Reason;
+      $Misc->doSaveTransactionLog($logData);
     }
 
-    public function doVerifyOrder($data){
+    return $OrderID;
+  }
 
-      $TODAY = date("Y-m-d H:i:s");
+  public function doVerifyOrder($data)
+  {
 
-      $Misc = new Misc();
+    $TODAY = date("Y-m-d H:i:s");
 
-      $OrderID = $data['OrderID'];
-      $VerifiedByID = $data['VerifiedByID'];
+    $Misc = new Misc();
 
-      if($OrderID > 0){
+    $OrderID = $data['OrderID'];
+    $VerifiedByID = $data['VerifiedByID'];
 
-        $OrderInfo = $this->getOrderInfo($OrderID);
+    if ($OrderID > 0) {
 
-        if(isset($OrderInfo)){
+      $OrderInfo = $this->getOrderInfo($OrderID);
 
-          DB::table('order')
-          ->where('OrderID',$OrderID)
+      if (isset($OrderInfo)) {
+
+        DB::table('order')
+          ->where('OrderID', $OrderID)
           ->update([
             'Status' => config('app.STATUS_VERIFIED'),
-            'VerifiedByID' =>$VerifiedByID,
-            'VerifiedDateTime' =>$TODAY
+            'VerifiedByID' => $VerifiedByID,
+            'VerifiedDateTime' => $TODAY
           ]);
 
-          //Save Transaction Log
-          $logData['TransRefID'] = $OrderID;
-          $logData['TransactedByID'] = $VerifiedByID;
-          $logData['ModuleType'] = "Order";
-          $logData['TransType'] = "Order Verified";
-          $logData['Remarks'] = "";
-          $Misc->doSaveTransactionLog($logData);            
-        }
-
+        //Save Transaction Log
+        $logData['TransRefID'] = $OrderID;
+        $logData['TransactedByID'] = $VerifiedByID;
+        $logData['ModuleType'] = "Order";
+        $logData['TransType'] = "Order Verified";
+        $logData['Remarks'] = "";
+        $Misc->doSaveTransactionLog($logData);
       }
-
-      return $OrderID;
-
     }
 
-    public function doPackedOrder($data){
+    return $OrderID;
+  }
 
-      $TODAY = date("Y-m-d H:i:s");
+  public function doPackedOrder($data)
+  {
 
-      $Misc = new Misc();
+    $TODAY = date("Y-m-d H:i:s");
 
-      $OrderID = $data['OrderID'];
-      $PackedByID = $data['PackedByID'];
+    $Misc = new Misc();
 
-      if($OrderID > 0){
+    $OrderID = $data['OrderID'];
+    $PackedByID = $data['PackedByID'];
 
-        $OrderInfo = $this->getOrderInfo($OrderID);
+    if ($OrderID > 0) {
 
-        if(isset($OrderInfo)){
+      $OrderInfo = $this->getOrderInfo($OrderID);
 
-          DB::table('order')
-          ->where('OrderID',$OrderID)
+      if (isset($OrderInfo)) {
+
+        DB::table('order')
+          ->where('OrderID', $OrderID)
           ->update([
             'Status' => config('app.STATUS_PACKED'),
-            'SetAsPackedByID' =>$PackedByID,
-            'SetAsPackedDateTime' =>$TODAY
+            'SetAsPackedByID' => $PackedByID,
+            'SetAsPackedDateTime' => $TODAY
           ]);
 
-          //Save Transaction Log
-          $logData['TransRefID'] = $OrderID;
-          $logData['TransactedByID'] = $PackedByID;
-          $logData['ModuleType'] = "Order";
-          $logData['TransType'] = "Order Packed";
-          $logData['Remarks'] = "";
-          $Misc->doSaveTransactionLog($logData);        
+        //Save Transaction Log
+        $logData['TransRefID'] = $OrderID;
+        $logData['TransactedByID'] = $PackedByID;
+        $logData['ModuleType'] = "Order";
+        $logData['TransType'] = "Order Packed";
+        $logData['Remarks'] = "";
+        $Misc->doSaveTransactionLog($logData);
 
-          //Get Order Item
-          $param["OrderID"] = $OrderID;
-          $OrderItem = $this->getOrderItemList($param);
+        //Get Order Item
+        $param["OrderID"] = $OrderID;
+        $OrderItem = $this->getOrderItemList($param);
 
-          if(count($OrderItem) > 0){
-            foreach ($OrderItem as $oi) {
-              $Inventory = new Inventory();
-              $param['CenterID'] = $OrderInfo->CenterID;
-              $param['ProductID'] = $oi->ProductID;
-              $param["Type"] = "OUT";
-              $param['Qty'] = $oi->Qty;
-              $param["TransType"] = "Order";
-              $param['TransactionRefID'] = $OrderID;
-              $param['Remarks'] = "";
-              $Inventory->doSaveInventoryChanges($param);
-            }
+        if (count($OrderItem) > 0) {
+          foreach ($OrderItem as $oi) {
+            $Inventory = new Inventory();
+            $param['CenterID'] = $OrderInfo->CenterID;
+            $param['ProductID'] = $oi->ProductID;
+            $param["Type"] = "OUT";
+            $param['Qty'] = $oi->Qty;
+            $param["TransType"] = "Order";
+            $param['TransactionRefID'] = $OrderID;
+            $param['Remarks'] = "";
+            $Inventory->doSaveInventoryChanges($param);
           }
-
-
         }
-
       }
-
-      return $OrderID;
-
     }
 
-    public function doShippedOrder($data){
+    return $OrderID;
+  }
 
-      $TODAY = date("Y-m-d H:i:s");
+  public function doShippedOrder($data)
+  {
 
-      $Misc = new Misc();
+    $TODAY = date("Y-m-d H:i:s");
 
-      $OrderID = $data['OrderID'];
-      $ShipperTrackingNo = $data['ShipperTrackingNo'];
-      $SetAsShippedByID = $data['SetAsShippedByID'];
+    $Misc = new Misc();
 
-      if($OrderID > 0){
+    $OrderID = $data['OrderID'];
+    $ShipperTrackingNo = $data['ShipperTrackingNo'];
+    $SetAsShippedByID = $data['SetAsShippedByID'];
 
-        $OrderInfo = $this->getOrderInfo($OrderID);
+    if ($OrderID > 0) {
 
-        if(isset($OrderInfo)){
+      $OrderInfo = $this->getOrderInfo($OrderID);
 
-          DB::table('order')
-          ->where('OrderID',$OrderID)
+      if (isset($OrderInfo)) {
+
+        DB::table('order')
+          ->where('OrderID', $OrderID)
           ->update([
             'Status' => config('app.STATUS_SHIPPED'),
-            'ShipperTrackingNo' =>$ShipperTrackingNo,
-            'SetAsShippedByID' =>$SetAsShippedByID,
-            'SetAsShippedDateTime' =>$TODAY
+            'ShipperTrackingNo' => $ShipperTrackingNo,
+            'SetAsShippedByID' => $SetAsShippedByID,
+            'SetAsShippedDateTime' => $TODAY
           ]);
 
-          //Save Transaction Log
-          $logData['TransRefID'] = $OrderID;
-          $logData['TransactedByID'] = $SetAsShippedByID;
-          $logData['ModuleType'] = "Order";
-          $logData['TransType'] = "Order Shipped";
-          $logData['Remarks'] = "";
-          $Misc->doSaveTransactionLog($logData);            
-        }
-
+        //Save Transaction Log
+        $logData['TransRefID'] = $OrderID;
+        $logData['TransactedByID'] = $SetAsShippedByID;
+        $logData['ModuleType'] = "Order";
+        $logData['TransType'] = "Order Shipped";
+        $logData['Remarks'] = "";
+        $Misc->doSaveTransactionLog($logData);
       }
-
-      return $OrderID;
-
     }
 
-    public function doSetAsDeliveredOrder($data){
+    return $OrderID;
+  }
 
-      $TODAY = date("Y-m-d H:i:s");
+  public function doSetAsDeliveredOrder($data)
+  {
 
-      $Misc = new Misc();
+    $TODAY = date("Y-m-d H:i:s");
 
-      $OrderID = $data['OrderID'];
-      $SetAsDeliveredByID = $data['SetAsDeliveredByID'];
+    $Misc = new Misc();
 
-      if($OrderID > 0){
+    $OrderID = $data['OrderID'];
+    $SetAsDeliveredByID = $data['SetAsDeliveredByID'];
 
-        $OrderInfo = $this->getOrderInfo($OrderID);
+    if ($OrderID > 0) {
 
-        if(isset($OrderInfo)){
+      $OrderInfo = $this->getOrderInfo($OrderID);
 
-          DB::table('order')
-          ->where('OrderID',$OrderID)
+      if (isset($OrderInfo)) {
+
+        DB::table('order')
+          ->where('OrderID', $OrderID)
           ->update([
             'Status' => config('app.STATUS_DELIVERED'),
-            'SetAsDeliveredByID' =>$SetAsDeliveredByID,
-            'SetAsDeliveredDateTime' =>$TODAY
+            'SetAsDeliveredByID' => $SetAsDeliveredByID,
+            'SetAsDeliveredDateTime' => $TODAY
           ]);
 
-          //Save Transaction Log
-          $logData['TransRefID'] = $OrderID;
-          $logData['TransactedByID'] = $SetAsDeliveredByID;
-          $logData['ModuleType'] = "Order";
-          $logData['TransType'] = "Order Delivered";
-          $logData['Remarks'] = "";
-          $Misc->doSaveTransactionLog($logData);            
-        }
-
+        //Save Transaction Log
+        $logData['TransRefID'] = $OrderID;
+        $logData['TransactedByID'] = $SetAsDeliveredByID;
+        $logData['ModuleType'] = "Order";
+        $logData['TransType'] = "Order Delivered";
+        $logData['Remarks'] = "";
+        $Misc->doSaveTransactionLog($logData);
       }
-
-      return $OrderID;
-
     }
 
-    public function doRevertOrderItems($OrderID, $Remarks){
+    return $OrderID;
+  }
 
-        $Inventory  = new Inventory();
+  public function doRevertOrderItems($OrderID, $Remarks)
+  {
 
-        //Revert Inventory receive
-        $itemlist = DB::table('orderitem as oi')
-          ->join('order', 'order.OrderID', '=', 'oi.OrderID')
-          ->selectraw("
+    $Inventory  = new Inventory();
+
+    //Revert Inventory receive
+    $itemlist = DB::table('orderitem as oi')
+      ->join('order', 'order.OrderID', '=', 'oi.OrderID')
+      ->selectraw("
               COALESCE(order.CenterID,0) as CenterID,
               COALESCE(oi.OrderID,0) as OrderID,
               COALESCE(oi.OrderItemID,0) as OrderItemID,
               COALESCE(oi.ProductID,0) as ProductID,
               COALESCE(oi.Qty,0) as Qty
           ")
-          ->where('oi.OrderID',$OrderID)
-          ->get();
-        
-        if(count($itemlist) > 0){
-          foreach ($itemlist as $ikey) {
-              $param['CenterID'] = $ikey->CenterID;
-              $param['ProductID'] = $ikey->ProductID;
-              $param['Type'] = "Remove From Out";
-              $param['Qty'] = $ikey->Qty;
-              $param['TransType'] = "Order";
-              $param['TransactionRefID'] = $OrderID;
-              $param['Remarks'] = $Remarks;
+      ->where('oi.OrderID', $OrderID)
+      ->get();
 
-              $Inventory->doSaveInventoryChanges($param);
-          }
-        }
-        
+    if (count($itemlist) > 0) {
+      foreach ($itemlist as $ikey) {
+        $param['CenterID'] = $ikey->CenterID;
+        $param['ProductID'] = $ikey->ProductID;
+        $param['Type'] = "Remove From Out";
+        $param['Qty'] = $ikey->Qty;
+        $param['TransType'] = "Order";
+        $param['TransactionRefID'] = $OrderID;
+        $param['Remarks'] = $Remarks;
 
-    }    
-   
-    public function doCheckoutOrder($data){
+        $Inventory->doSaveInventoryChanges($param);
+      }
+    }
+  }
 
-      $Misc  = new Misc();
-      $MemberEntry  = new MemberEntry();
-      $CustomerCart = new CustomerCart();
-      $Email = new Email();
+  public function doCheckoutOrder($data)
+  {
 
-      $TODAY = date("Y-m-d H:i:s");
+    $Misc  = new Misc();
+    $MemberEntry  = new MemberEntry();
+    $CustomerCart = new CustomerCart();
+    $Email = new Email();
 
-      $CenterID = $data['CenterID'];  
+    $TODAY = date("Y-m-d H:i:s");
 
-      $CustomerType = $data['CustomerType'];  
-      $CustomerEntryID = $data['CustomerEntryID'];  
+    $CenterID = $data['CenterID'];
 
-      $CustomerName = $data['CustomerName'];
-      $EmailAddress = $data['EmailAddress'];
-      $MobileNo = $data['MobileNo'];
+    $CustomerType = $data['CustomerType'];
+    $CustomerEntryID = $data['CustomerEntryID'];
 
-      $Address = $data['Address'];
-      $CityID = $data['CityID'];
-      $StateProvince = $data['StateProvince'];
-      $ZipCode = $data['ZipCode'];
-      $CountryID = $data['CountryID'];
+    $CustomerName = $data['CustomerName'];
+    $EmailAddress = $data['EmailAddress'];
+    $MobileNo = $data['MobileNo'];
 
-      $GrossTotal = $data['GrossTotal'];
-      $ShippingCharges = $data['ShippingCharges'];
-      $TotalDiscountPercent = $data['TotalDiscountPercent'];
-      $TotalDiscountAmount = $data['TotalDiscountAmount'];
-      $TotalAmountDue = $data['TotalAmountDue'];
+    $Address = $data['Address'];
+    $CityID = $data['CityID'];
+    $StateProvince = $data['StateProvince'];
+    $ZipCode = $data['ZipCode'];
+    $CountryID = $data['CountryID'];
 
-      $ShipperID = $data['ShipperID'];
-      $ModeOfPayment = $data['ModeOfPayment'];
-      $TotalVoucherPayment = $data['TotalVoucherPayment'];
-      $TotalEWalletPayment = $data['TotalEWalletPayment'];
-      $TotalCashPayment = $data['TotalCashPayment'];
-      $AmountChange = $data['AmountChange'];
-      $TotalRebatableValue = $data['TotalRebatableValue'];
+    $GrossTotal = $data['GrossTotal'];
+    $ShippingCharges = $data['ShippingCharges'];
+    $TotalDiscountPercent = $data['TotalDiscountPercent'];
+    $TotalDiscountAmount = $data['TotalDiscountAmount'];
+    $TotalAmountDue = $data['TotalAmountDue'];
 
-      $Remarks = $data['Remarks'];
-      $Status = $data['Status'];
+    $ShipperID = $data['ShipperID'];
+    $ModeOfPayment = $data['ModeOfPayment'];
+    $TotalVoucherPayment = $data['TotalVoucherPayment'];
+    $TotalEWalletPayment = $data['TotalEWalletPayment'];
+    $TotalCashPayment = $data['TotalCashPayment'];
+    $AmountChange = $data['AmountChange'];
+    $TotalRebatableValue = $data['TotalRebatableValue'];
 
-      $Source = $data['Source'];
+    $Remarks = $data['Remarks'];
+    $Status = $data['Status'];
 
-      $ApprovedByID = $data['ApprovedByID'];
-      $CreatedByID = $data['CreatedByID'];
-      $UpdatedByID = $data['UpdatedByID'];
+    $Source = $data['Source'];
 
-      $Cart = $data["Cart"];
+    $ApprovedByID = $data['ApprovedByID'];
+    $CreatedByID = $data['CreatedByID'];
+    $UpdatedByID = $data['UpdatedByID'];
 
-      $OrderNo = $Misc->GenerateRandomNo(6,'order','OrderNo');
+    $Cart = $data["Cart"];
 
-      $OrderID =  DB::table('order')
-        ->insertGetId([
+    $OrderNo = $Misc->GenerateRandomNo(6, 'order', 'OrderNo');
 
-          'CenterID' => $CenterID,
+    $OrderID =  DB::table('order')
+      ->insertGetId([
 
-          'OrderNo' => $OrderNo,
-          'OrderDateTime' => $TODAY,
+        'CenterID' => $CenterID,
 
-          'CustomerType' => $CustomerType,
-          'CustomerEntryID' => $CustomerEntryID,
+        'OrderNo' => $OrderNo,
+        'OrderDateTime' => $TODAY,
 
-          'CustomerName'=> $CustomerName,
-          'EmailAddress'=> $EmailAddress,
-          'MobileNo' => $MobileNo,
+        'CustomerType' => $CustomerType,
+        'CustomerEntryID' => $CustomerEntryID,
 
-          'Address' => $Address,
-          'CityID' => $CityID,
-          'StateProvince' => $StateProvince,
-          'ZipCode' => $ZipCode,
-          'CountryID' => $CountryID,
+        'CustomerName' => $CustomerName,
+        'EmailAddress' => $EmailAddress,
+        'MobileNo' => $MobileNo,
 
-          'GrossTotal'=> $GrossTotal,
-          'ShippingCharges'=> $ShippingCharges,
-          'TotalDiscountPercent'=> $TotalDiscountPercent,          
-          'TotalDiscountAmount'=> $TotalDiscountAmount,
-          'TotalAmountDue' => $TotalAmountDue,
+        'Address' => $Address,
+        'CityID' => $CityID,
+        'StateProvince' => $StateProvince,
+        'ZipCode' => $ZipCode,
+        'CountryID' => $CountryID,
 
-          'ShipperID' => $ShipperID,
-          'ModeOfPayment' => $ModeOfPayment,
-          'TotalVoucherPayment' => $TotalVoucherPayment,
-          'TotalEWalletPayment'=> $TotalEWalletPayment,
-          'TotalCashPayment'=> $TotalCashPayment,
-          'AmountChange'=> $AmountChange,
-          'TotalRebatableValue'=> $TotalRebatableValue,
+        'GrossTotal' => $GrossTotal,
+        'ShippingCharges' => $ShippingCharges,
+        'TotalDiscountPercent' => $TotalDiscountPercent,
+        'TotalDiscountAmount' => $TotalDiscountAmount,
+        'TotalAmountDue' => $TotalAmountDue,
 
-          'Remarks'=> $Remarks,
-          'Status'=> $Status,
+        'ShipperID' => $ShipperID,
+        'ModeOfPayment' => $ModeOfPayment,
+        'TotalVoucherPayment' => $TotalVoucherPayment,
+        'TotalEWalletPayment' => $TotalEWalletPayment,
+        'TotalCashPayment' => $TotalCashPayment,
+        'AmountChange' => $AmountChange,
+        'TotalRebatableValue' => $TotalRebatableValue,
 
-          'Source'=> $Source,
+        'Remarks' => $Remarks,
+        'Status' => $Status,
 
-          'ApprovedByID'=> $ApprovedByID,
-          'ApprovedDateTime' =>$TODAY,
+        'Source' => $Source,
 
-          'CreatedByID'=> $CreatedByID,
-          'DateTimeCreated' =>$TODAY,
+        'ApprovedByID' => $ApprovedByID,
+        'ApprovedDateTime' => $TODAY,
 
-          'UpdatedByID'=> $UpdatedByID,
-          'DateTimeUpdated' =>$TODAY
+        'CreatedByID' => $CreatedByID,
+        'DateTimeCreated' => $TODAY,
+
+        'UpdatedByID' => $UpdatedByID,
+        'DateTimeUpdated' => $TODAY
 
       ]);
 
-      //Save Transaction Log
-      $logData['TransRefID'] = $OrderID;
-      $logData['TransactedByID'] = $CreatedByID;
-      $logData['ModuleType'] = "Order";
-      $logData['TransType'] = "New Order";
-      $logData['Remarks'] = "";
-      $Misc->doSaveTransactionLog($logData);
+    //Save Transaction Log
+    $logData['TransRefID'] = $OrderID;
+    $logData['TransactedByID'] = $CreatedByID;
+    $logData['ModuleType'] = "Order";
+    $logData['TransType'] = "New Order";
+    $logData['Remarks'] = "";
+    $Misc->doSaveTransactionLog($logData);
 
-      //SaveItems
-      if(!empty($Cart)){
-        foreach ($Cart as $ckey) {
-         
-          $ProductID = $ckey->ProductID;
-          $Qty = $ckey->Qty;
+    //SaveItems
+    if (!empty($Cart)) {
+      foreach ($Cart as $ckey) {
 
-          $Price = 0;
-          $SubTotal = 0;
-          $RebatableValue = 0;
-          if(Session("MEMBER_LOGGED_IN")){
-            $Price = $ckey->DistributorPrice;
-            $SubTotal = $ckey->Qty * $ckey->DistributorPrice;
-            $RebatableValue = $ckey->Qty * $ckey->RebateValue;
-          }else{
-            $Price = $ckey->RetailPrice;
-            $SubTotal = $ckey->Qty * $ckey->RetailPrice;
-          }
+        $ProductID = $ckey->ProductID;
+        $Qty = $ckey->Qty;
 
-          if($ProductID > 0){
-            $OrderItemID =  DB::table('orderitem')
-              ->insertGetId([
-                  'OrderID' => $OrderID,
-                  'ProductID' => $ProductID,
-                  'Qty' => $Qty,
-                  'Price' => $Price,
-                  'SubTotal' => $SubTotal,
-                  'RebatableValue' => $RebatableValue,
-                  'DateTimeCreated' =>$TODAY,
-                  'DateTimeUpdated' =>$TODAY
-              ]);
-          }
+        $Price = 0;
+        $SubTotal = 0;
+        $RebatableValue = 0;
+        if (Session("MEMBER_LOGGED_IN")) {
+          $Price = $ckey->DistributorPrice;
+          $SubTotal = $ckey->Qty * $ckey->DistributorPrice;
+          $RebatableValue = $ckey->Qty * $ckey->RebateValue;
+        } else {
+          $Price = $ckey->RetailPrice;
+          $SubTotal = $ckey->Qty * $ckey->RetailPrice;
+        }
+
+        if ($ProductID > 0) {
+          $OrderItemID =  DB::table('orderitem')
+            ->insertGetId([
+              'OrderID' => $OrderID,
+              'ProductID' => $ProductID,
+              'Qty' => $Qty,
+              'Price' => $Price,
+              'SubTotal' => $SubTotal,
+              'RebatableValue' => $RebatableValue,
+              'DateTimeCreated' => $TODAY,
+              'DateTimeUpdated' => $TODAY
+            ]);
         }
       }
-
-      //Clear Customer Cart
-      $cparam["MemberEntryID"] = $data['MemberEntryID'];
-      $cparam["SessionID"] = $data['SessionID'];
-      $CustomerCart->doClearCart($cparam);
-
-      //Send Order Email 
-      $eparam["OrderID"] =  $OrderID;
-      $Email->sendRecievedSalesEmail($eparam);
-
-      $RetVal['OrderID'] = $OrderID;
-      $RetVal['OrderNo'] = $OrderNo;
-
-      return $RetVal;
-
     }
 
-    public function getAllCenterSalesList($param){
+    //Clear Customer Cart
+    $cparam["MemberEntryID"] = $data['MemberEntryID'];
+    $cparam["SessionID"] = $data['SessionID'];
+    $CustomerCart->doClearCart($cparam);
 
-      $DateFrom = $param['DateFrom'];
-      $DateTo = $param['DateTo'];
+    //Send Order Email 
+    $eparam["OrderID"] =  $OrderID;
+    $Email->sendRecievedSalesEmail($eparam);
 
-      ini_set('memory_limit', '999999M');
+    $RetVal['OrderID'] = $OrderID;
+    $RetVal['OrderNo'] = $OrderNo;
 
-      $query = DB::table('centers as ctr')
-        ->selectraw("
+    return $RetVal;
+  }
+
+  public function getAllCenterSalesList($param)
+  {
+
+    $DateFrom = $param['DateFrom'];
+    $DateTo = $param['DateTo'];
+
+    ini_set('memory_limit', '999999M');
+
+    $query = DB::table('centers as ctr')
+      ->selectraw("
 
             COALESCE(ctr.CenterID,0) as CenterID,
             COALESCE(ctr.CenterNo,'') as CenterNo,
@@ -1164,53 +1189,53 @@ class Order extends Model
                 SUM(COALESCE(odr.TotalAmountDue,0))
               FROM `order` as odr
               WHERE odr.CenterID = ctr.CenterID
-              AND COALESCE(odr.Status,'') != '".config('app.STATUS_CANCELLED')."'
-              AND COALESCE(odr.Status,'') != '".config('app.STATUS_RETURNED')."'
+              AND COALESCE(odr.Status,'') != '" . config('app.STATUS_CANCELLED') . "'
+              AND COALESCE(odr.Status,'') != '" . config('app.STATUS_RETURNED') . "'
               AND COALESCE(odr.IsPaid,0) = 1
-              AND COALESCE(odr.OrderDateTime,'') BETWEEN '".$DateFrom."' AND '".$DateTo." 23:59:59'
+              AND COALESCE(odr.OrderDateTime,'') BETWEEN '" . $DateFrom . "' AND '" . $DateTo . " 23:59:59'
             ),0) as TotalSales
 
         ")
-        ->orderByraw("TotalSales DESC");
+      ->orderByraw("TotalSales DESC");
 
-      $list = $query->get();
+    $list = $query->get();
 
-      return $list;
+    return $list;
+  }
 
-    }
+  public function getCenterSalesList($param)
+  {
 
-    public function getCenterSalesList($param){
+    $CenterID = $param['CenterID'];
+    $DateFrom = $param['DateFrom'];
+    $DateTo = $param['DateTo'];
 
-      $CenterID = $param['CenterID'];
-      $DateFrom = $param['DateFrom'];
-      $DateTo = $param['DateTo'];
+    ini_set('memory_limit', '999999M');
 
-      ini_set('memory_limit', '999999M');
-
-      $query = DB::table('centers as ctr')
-        ->leftjoin('order as odr', 'ctr.CenterID', '=', 'odr.CenterID')
-        ->selectraw("
+    $query = DB::table('centers as ctr')
+      ->leftjoin('order as odr', 'ctr.CenterID', '=', 'odr.CenterID')
+      ->selectraw("
             COALESCE(ctr.CenterID,0) as CenterID,
             COALESCE(ctr.CenterNo,'') as CenterNo,
             COALESCE(ctr.Center,'') as Center,
             DATE(odr.OrderDateTime) as SalesDate,
             SUM(COALESCE(odr.TotalAmountDue,0)) as TotalSales
         ")
-        ->groupBy('ctr.CenterID','ctr.CenterNo', 'ctr.Center', 'SalesDate')
-        ->whereraw("ctr.CenterID = ".$CenterID)
-        ->whereraw("COALESCE(odr.Status,'') != '".config('app.STATUS_CANCELLED')."'")
-        ->whereraw("COALESCE(odr.Status,'') != '".config('app.STATUS_RETURNED')."'")
-        ->whereraw("COALESCE(odr.IsPaid,0) = 1")
-        ->whereraw("COALESCE(odr.OrderDateTime,'') BETWEEN '".$DateFrom."' AND '".$DateTo." 23:59:59'")
-        ->orderByraw("SalesDate ASC");
+      ->groupBy('ctr.CenterID', 'ctr.CenterNo', 'ctr.Center', 'SalesDate')
+      ->whereraw("ctr.CenterID = " . $CenterID)
+      ->whereraw("COALESCE(odr.Status,'') != '" . config('app.STATUS_CANCELLED') . "'")
+      ->whereraw("COALESCE(odr.Status,'') != '" . config('app.STATUS_RETURNED') . "'")
+      ->whereraw("COALESCE(odr.IsPaid,0) = 1")
+      ->whereraw("COALESCE(odr.OrderDateTime,'') BETWEEN '" . $DateFrom . "' AND '" . $DateTo . " 23:59:59'")
+      ->orderByraw("SalesDate ASC");
 
-      $list = $query->get();
+    $list = $query->get();
 
-      return $list;
+    return $list;
+  }
 
-    }
-
-  public function getDirectSellingReport($param){
+  public function getDirectSellingReport($param)
+  {
 
     $DateFrom = $param['DateFrom'];
     $DateTo = $param['DateTo'];
@@ -1238,25 +1263,34 @@ class Order extends Model
                 SUM(COALESCE(TotalAmountDue,0)) as TotalDirectSales
               FROM `order`
               WHERE CustomerEntryID = mbrentry.EntryID
-              AND OrderDateTime BETWEEN '".$DateFrom." 00:00:00' AND '".$DateTo." 23:59:59'
+              AND OrderDateTime BETWEEN '" . $DateFrom . " 00:00:00' AND '" . $DateTo . " 23:59:59'
               AND IsPaid = 1
               )
             ,0) as TotalDirectSales,
+
+             COALESCE((SELECT 
+                SUM(COALESCE(TotalRebatableValue,0)) as TotalRebatableValue
+              FROM `order`
+              WHERE CustomerEntryID = mbrentry.EntryID
+              AND OrderDateTime BETWEEN '" . $DateFrom . " 00:00:00' AND '" . $DateTo . " 23:59:59'
+              AND IsPaid = 1
+              )
+            ,0) as TotalRebatableValue,
 
             COALESCE(mbr.Status,'') as Status
 
       ");
 
-    if($Limit > 0){
+    if ($Limit > 0) {
       $query->limit($Limit);
-      $query->offset(($PageNo-1) * $Limit);
+      $query->offset(($PageNo - 1) * $Limit);
     }
 
     $query->orderbyraw("(COALESCE((SELECT 
                 SUM(COALESCE(TotalAmountDue,0)) as TotalDirectSales
               FROM `order`
               WHERE CustomerEntryID = mbrentry.EntryID
-              AND OrderDateTime BETWEEN '".$DateFrom." 00:00:00' AND '".$DateTo." 23:59:59'
+              AND OrderDateTime BETWEEN '" . $DateFrom . " 00:00:00' AND '" . $DateTo . " 23:59:59'
               AND IsPaid = 1
               )
             ,0)) DESC");
@@ -1264,8 +1298,5 @@ class Order extends Model
     $list = $query->get();
 
     return $list;
-
   }
-
-
 }

@@ -9,12 +9,12 @@
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
     <!--favicon-->
-    <link rel="shortcut icon" href="{{URL::to('img/logo.png')}}">
+    <link rel="shortcut icon" href="{{ asset(config('app.src_name') . 'img/logo.png')}}">
 
       <!-- jQuery 3 -->
-      <script src="{{URL::to('admin/bower_components/jquery/dist/jquery.min.js') }}"></script>
+      <script src="{{ asset(config('app.src_name') . 'admin/bower_components/jquery/dist/jquery.min.js') }}"></script>
       <!-- jQuery UI 1.11.4 -->
-      <script src="{{URL::to('admin/bower_components/jquery-ui-1.12.1/jquery-ui.min.js') }}"></script>
+      <script src="{{ asset(config('app.src_name') . 'admin/bower_components/jquery-ui-1.12.1/jquery-ui.min.js') }}"></script>
     @include('inc.admin.admincsslink')
 
     @include('inc.admin.adminjslink')
@@ -52,7 +52,7 @@
     width:200px;
     height:200px;
     background-color:#fff;
-    background-image:url('{{ URL::to('img/loader.gif') }}');
+    background-image:url('{{ asset(config('app.src_name') . 'img/loader.gif') }}');
     background-size: 200px 200px;
     background-repeat:no-repeat;
     background-position:center;
