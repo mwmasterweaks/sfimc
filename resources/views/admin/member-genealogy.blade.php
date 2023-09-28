@@ -9,7 +9,7 @@
    ?>
    
     <?php 
-        $PicPath = "/img/members/";
+        $PicPath = asset(config('app.src_name') . "img/members") . "/";
 
         $ParentID = 1;
         $ParentEntryID = 0;
@@ -123,8 +123,7 @@
    <div id="memberentry" style="width:100%; height:700px;"></div>
 
             <script type="text/ecmascript">
-alert("bbb");
-                        console.log("bbbb");
+                console.log("bbbb");
                 var nodes = [
                         <?php
                             $CHILDNAME = '';
@@ -144,7 +143,7 @@ alert("bbb");
                             @endif
 
                             <?php 
-                                $ProfilePic = URL::to('/').$ProfilePic;
+                                $ProfilePic = $ProfilePic;
                                 $EntryCode = "IBO Number : ".$TOP->EntryCode;
                                 $MemberName = $TOP->MemberName;
                                 $LevelNo = "";
@@ -194,7 +193,7 @@ alert("bbb");
                                 }
 
                                 if($child->EntryID > 0){
-                                    $ProfilePic = URL::to('/').$ProfilePic;
+                                    $ProfilePic = $ProfilePic;
                                     $EntryCode = "IBO Number : ".$child->EntryCode;
                                     $ChildName = $child->MemberFullName;
                                     $LevelNo = "Level ".$child->LevelNo;
@@ -205,7 +204,7 @@ alert("bbb");
                                     $Package = $child->Package;
                                     $Status = "Status : ".$child->Status;
                                 }else{
-                                    $ProfilePic = URL::to('/').$ProfilePic;
+                                    $ProfilePic = $ProfilePic;
                                     $EntryCode = "";
                                     $ChildName = "";
                                     $LevelNo = "";

@@ -70,6 +70,24 @@
           </li>
         @endif
 
+        @php($wirecode = Session('IS_SUPER_ADMIN')==true ? true : $UserAccountModel->getUserAccountAccess(Session('ADMIN_ACCOUNT_ID'),'Wire Code'))  
+        @if($wirecode)
+          <li class="treeview">
+            <a href="#">
+              <i class="fa fa-list"></i>
+              <span>Wire Management</span>
+              <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+            </a>
+            <ul class="treeview-menu">
+              <li><a href="{{ route('admin-wirecode') }}"><i class="fa fa-list"></i> Wire Code </a></li>
+              <li><a href="{{ route('admin-wire-history') }}"><i class="fa fa-list"></i> Wire Active History</a></li>
+              <li><a href="{{ route('admin-member-active-wire') }}"><i class="fa fa-list"></i> Members Activate Wire</a></li>
+            </ul>
+          </li>
+        @endif
+
         @php($IsMemberEntry = Session('IS_SUPER_ADMIN')==true ? true : $UserAccountModel->getUserAccountAccess(Session('ADMIN_ACCOUNT_ID'),'Member Entry'))  
         @php($IsAllowEditMemberInfo = Session('IS_SUPER_ADMIN')==true ? true : $UserAccountModel->getUserAccountAccess(Session('ADMIN_ACCOUNT_ID'),'Allow Edit Member Info'))
         @php($IsMemberVouchers = Session('IS_SUPER_ADMIN')==true ? true : $UserAccountModel->getUserAccountAccess(Session('ADMIN_ACCOUNT_ID'),'Member Vouchers'))  

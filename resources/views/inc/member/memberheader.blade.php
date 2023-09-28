@@ -17,8 +17,9 @@
 			<a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
 				<span class="sr-only">Toggle navigation</span>
 			</a>
-			<div class="navbar-custom-menu">
-				<h4 class="widget-user-desc" style="color:white;">WIRE CODE required this friday(cut-off): <span style="color:red;">(soon)</span></h4>
+			<div class="navbar-custom-menu" style="padding-right: 30px;">
+				<h4 class="widget-user-desc" style="color:white;">WIRE CODE required this friday(cut-off): <span style="color:red;">
+						{{ $active_wire->wirecode->code }}</span></h4>
 			</div>
 		</nav>
 	</header>

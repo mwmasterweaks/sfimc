@@ -139,8 +139,7 @@
 			                </div>
 		            	</div>
 		            	<div id="divMember" class="col-md-4">
-			                <label class="col-md-12" style="font-weight: normal;">Member 
-			                Name <span style="color:red;">*</span></label>
+			                <label class="col-md-12" style="font-weight: normal;">Member Name <span style="color:red;">*</span></label>
 			                <div class="col-md-12">
 	                            <input type="hidden" id="CustomerEntryID" name="EntryID" readonly>
 	                            <input type="text" data-type="MemberName" id="MemberName" name="MemberName" placeholder="Search by Member No., Member Name" class="form-control autocomplete_txt" autocomplete="off" style="width:100%; font-weight:normal;">
