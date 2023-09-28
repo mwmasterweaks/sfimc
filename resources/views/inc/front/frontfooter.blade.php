@@ -61,7 +61,6 @@
                                         <div class="img-holder">
                                             <a href="{{ route('news-event-detail').'?Title='.$newsevents->SlugTitle }}">
                                               <img style="position: absolute;height: 98%;top: 1px;" src="{{ asset(config('app.src_name') . 'img/newsevents/'.$newsevents->RecordID.'.jpg')}}" alt="{{ $newsevents->Title }}">
-                                            
                                             </a>
                                             <div class="overlay-style-one">
                                                 <div class="box">
