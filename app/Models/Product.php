@@ -22,6 +22,7 @@ use App\Models\Inventory;
 
 class Product extends Model
 {
+  protected $table = "product";
 
   public function getProductList($param)
   {

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
 
 use Mail;
 use Session;
@@ -24,11 +25,14 @@ use App\Models\SMS;
 use App\Models\CustomerCart;
 use App\Models\Personnel;
 use App\Models\Inventory;
+use App\Models\wirecode_active;
+use App\Models\member_activate_wire;
 use App\Models\GiftCertificate;
 
 class Order extends Model
 {
 
+  protected $table = "order";
   public function getOrderList($param)
   {
 
@@ -726,9 +730,14 @@ class Order extends Model
 
       $data['OrderID'] = $OrderID;
 
-      //Distribute For Personal And Group Purchases
-      DB::statement("call spSetAccumulatedOrder(" . $OrderID . ",'" . $TODAY . "')");
-
+      $order_data = DB::table('order')
+        ->where('OrderID', $OrderID)->first();
+      //if (!($order_data !== null && $order_data->TotalVoucherPayment > 0)) {
+      if (!($order_data->TotalVoucherPayment > 0)) {
+        //Distribute For Personal And Group Purchases
+        $this->wirecode_checker($OrderID, $order_data->CustomerEntryID);
+        DB::statement("call spSetAccumulatedOrder(" . $OrderID . ",'" . $TODAY . "')");
+      }
       //Save Transaction Log
       $logData['TransRefID'] = $OrderID;
       $logData['TransactedByID'] = $SetPaidByID;
@@ -739,6 +748,32 @@ class Order extends Model
     }
 
     return $OrderID;
+  }
+
+  public function wirecode_checker($OrderID, $memberID)
+  {
+    $datenow = new Carbon();
+    //get active wire code
+    $active_wire = wirecode_active::with(["wirecode"])
+      ->where('start_date', "<=", $datenow->toDateString())
+      ->where('end_date', ">=", $datenow->toDateString())
+      ->first();
+    $wirecode = $active_wire->wirecode;
+
+    //check if meet the required wirecode
+    $orderitems = DB::table('orderitem')
+      ->where('OrderID', $OrderID)
+      ->where('ProductID', $wirecode->productID)
+      ->where('Qty', ">=", $wirecode->minimum_qty)
+      ->get();
+    if (!$orderitems->isEmpty()) {
+      $member_activate_wire = new member_activate_wire;
+      $member_activate_wire->memberID = $memberID;
+      $member_activate_wire->wirecode_activate_id = $active_wire->id;
+      $member_activate_wire->orderID = $OrderID;
+      //$member_activate_wire->timestamps = false;
+      $member_activate_wire->save();
+    }
   }
 
   public function doCancelOrder($data)

@@ -727,22 +727,28 @@ class MemberEntry extends Model
 
     $TODAY = date("Y-m-d H:i:s");
     $Misc  = new Misc();
-
     $EntryID = $data['EntryID'];
     $MemberID = $data['MemberID'];
     $CodeID = $data['CodeID'];
     $PackageID = $data['PackageID'];
     $IsFreeCode = $data['IsFreeCode'];
-
     $SponsorEntryID = $data['SponsorEntryID'];
-
     $ParentEntryID = $data['ParentEntryID'];
     $ParentPosition = $data['ParentPosition'];
-
     $Status = $data['Status'];
-
     $EncodedByID = $data['EncodedByID'];
-
+    $FirstName = $data['FirstName'];
+    $LastName = $data['LastName'];
+    $MiddleName = $data['MiddleName'];
+    $TelNo = $data['TelNo'];
+    $MobileNo = $data['MobileNo'];
+    $EmailAddress = $data['EmailAddress'];
+    $Password = $data['Password'];
+    $Address = $data['Address'];
+    $CityID = $data['CityID'];
+    $StateProvince = $data['StateProvince'];
+    $ZipCode = $data['ZipCode'];
+    $CountryID = $data['CountryID'];
     $CreatedByID = $data['CreatedByID'];
     $UpdatedByID = $data['UpdatedByID'];
 
@@ -750,19 +756,13 @@ class MemberEntry extends Model
       DB::table('memberentry')
         ->where('EntryID', $EntryID)
         ->update([
-
           'MemberID' => $MemberID,
-
           'CodeID' => $CodeID,
           'PackageID' => $PackageID,
-
           'SponsorEntryID' => $SponsorEntryID,
-
           'ParentEntryID' => $ParentEntryID,
           'ParentPosition' => $ParentPosition,
-
           'UpdatedByID' => $UpdatedByID,
-
           'DateTimeUpdated' => $TODAY
         ]);
 
@@ -774,40 +774,28 @@ class MemberEntry extends Model
       $logData['Remarks'] = "";
       $Misc->doSaveTransactionLog($logData);
     } else {
-
       $EntryCode = $Misc->GenerateRandomNo(6, 'memberentry', 'EntryCode');
-
       $EntryID =  DB::table('memberentry')
         ->insertGetId([
           'EntryCode' => $EntryCode,
           'EntryDateTime' => $TODAY,
-
           'CodeID' => $CodeID,
           'PackageID' => $PackageID,
-
           'MemberID' => $MemberID,
-
           'SponsorEntryID' => $SponsorEntryID,
-
           'ParentEntryID' => $ParentEntryID,
           'ParentPosition' => $ParentPosition,
-
           'NoOfEntryShare' => 0,
           'EntryShareAmount' => 0,
           'MaxEntryShare' => 0,
           'TotalEntryShare' => 0,
           'IsEntryShareComplete' => 0,
-
           'EncodedByID' => $EncodedByID,
-
           'CreatedByID' => $CreatedByID,
           'UpdatedByID' => $UpdatedByID,
-
           'DateTimeCreated' => $TODAY
         ]);
-
       $data['EntryID'] = $EntryID;
-
       //Assign To Parent 
       if ($ParentPosition == config('app.POSITION_LEFT')) {
         DB::table('memberentry')
@@ -822,26 +810,19 @@ class MemberEntry extends Model
             'RightEntryID' => $EntryID
           ]);
       }
-
       //Set Member Entry Share
       $this->doSetMemberEntryShare($data);
-
       if ($IsFreeCode == 0) {
-
         //Distribute For Entry Share Commission
         DB::statement("call spDistributeEntryShare(" . $EntryID . "," . $PackageID . ",'" . $TODAY . "')");
-
         //Issue Sponsor Commission
         DB::statement("call spGenerateSponsorCommission(" . $EntryID . ",'" . $TODAY . "')");
-
         //Set Matching Detail
         DB::statement("call spSetMatchingDetail(" . $EntryID . "," . $PackageID . ",'" . $TODAY . "')");
       }
-
       //Set Code as Used
       $Code = new Code();
       $Code->doSetCodeAsUsed($data);
-
       //Save Transaction Log
       $logData['TransRefID'] = $EntryID;
       $logData['TransactedByID'] = $CreatedByID;
@@ -849,7 +830,6 @@ class MemberEntry extends Model
       $logData['TransType'] = "New Member Entry";
       $logData['Remarks'] = "";
       $Misc->doSaveTransactionLog($logData);
-
       if ($Status == config('app.STATUS_ACTIVE')) {
         //Send Email 
         $Email = new Email();
@@ -859,25 +839,26 @@ class MemberEntry extends Model
         $eparam["EmailAddress"] = $data['EmailAddress'];
         $Email->SendMemberRegistration($eparam);
       }
+      $this->updateMemberTree($EntryID);
     }
 
     return $EntryID;
   }
 
-  function updateMemberTree($newMemberID)
+  function updateMemberTree($EntryID)
   {
     // Fetch the new member and their sponsor from the members table
     $newMember = DB::table('memberentry')
       ->where(
-        'id',
-        $newMemberID
+        'EntryID',
+        $EntryID
       )
       ->first();
 
     $sponsor = DB::table('memberentry')
       ->where(
-        'id',
-        $newMember->sponsor_id
+        'MemberID',
+        $newMember->SponsorEntryID
       )
       ->first();
 
@@ -888,42 +869,42 @@ class MemberEntry extends Model
 
     // Determine the ancestor_id and descendant_id for the member_tree table
     $ancestorID = $sponsor->MemberID;
-    $descendantID = $newMemberID;
+    $descendantID =  $newMember->MemberID;
 
     // Calculate the depth based on the sponsor's depth in the member_tree table
-    $sponsorDepth = MemberTree::where('descendant_id', $sponsor->MemberID)->max('depth');
-    $depth = $sponsorDepth + 1;
+    //$sponsorDepth = MemberTree::where('descendant_id', $sponsor->MemberID)->max('depth');
+    $depth = 0;
 
     // Insert the new relationship into the member_tree table
     MemberTree::create([
-      'ancestor_id' => $ancestorID,
+      'ancestor_id' => $descendantID,
       'descendant_id' => $descendantID,
       'depth' => $depth,
     ]);
 
     // Check if the sponsor has an ancestor and update the member_tree table recursively
-    if ($sponsor->sponsor_id) {
-      updateMemberTreeRecursively($sponsor->MemberID, $descendantID, $depth);
+    if ($sponsor->SponsorEntryID) {
+      $this->updateMemberTreeRecursively($descendantID, $descendantID, $depth);
     }
   }
 
   function updateMemberTreeRecursively($ancestorID, $descendantID, $depth)
   {
     $sponsor = DB::table('memberentry')
-      ->where('id', $ancestorID)
+      ->where('MemberID', $ancestorID)
       ->first();
 
-    if (!$sponsor) {
+
+
+    // Determine the ancestor_id for the member_tree table
+    $newAncestorID = $sponsor->SponsorEntryID;
+    if (!$newAncestorID) {
       // Handle cases where the sponsor is not found
       return;
     }
-
-    // Determine the ancestor_id for the member_tree table
-    $newAncestorID = $sponsor->sponsor_id;
-
     // Calculate the depth based on the sponsor's depth in the member_tree table
-    $sponsorDepth = MemberTree::where('descendant_id', $sponsor->MemberID)->max('depth');
-    $newDepth = $sponsorDepth + 1;
+    //$sponsorDepth = MemberTree::where('descendant_id', $sponsor->SponsorEntryID)->max('depth');
+    $newDepth = $depth + 1;
 
     // Insert the new relationship into the member_tree table
     MemberTree::create([
@@ -933,8 +914,8 @@ class MemberEntry extends Model
     ]);
 
     // Recursively update the member_tree table for the sponsor's ancestor
-    if ($sponsor->sponsor_id) {
-      updateMemberTreeRecursively($sponsor->MemberID, $descendantID, $newDepth);
+    if ($sponsor->SponsorEntryID) {
+      $this->updateMemberTreeRecursively($newAncestorID, $descendantID, $newDepth);
     }
   }
 

@@ -259,6 +259,57 @@ class AdminController extends Controller
 		return response()->json($RetVal);
 	}
 
+
+	//WIRE CODE ------------------------------------------------------------
+	public function showWireCode()
+	{
+
+		if (!$this->IsAdminLoggedIn()) {
+			return Redirect::route('admin-logout');
+		}
+
+		$Inventory = new Inventory();
+
+		$data['Page'] = 'wirecode';
+		$data['Token'] = csrf_token();
+		$data = $this->SetAdminInitialData($data);
+
+		$param["IsWithInventoryOnly"] = 0;
+		$param["IsComplanProductsOnly"] = 0;
+		$param["CenterID"] = Session("ADMIN_CENTER_ID");
+		$param["Status"] = '';
+		$param["SearchText"] = '';
+		$param["Limit"] = 0;
+		$param["PageNo"] = 0;
+		$data["ProductList"] = $Inventory->getInventoryList($param);
+
+		return View::make('admin/wirecode')->with($data);
+	}
+	public function showWireHistory()
+	{
+
+		if (!$this->IsAdminLoggedIn()) {
+			return Redirect::route('admin-logout');
+		}
+
+		$data['Page'] = 'wirecode-active-history';
+		$data['Token'] = csrf_token();
+		$data = $this->SetAdminInitialData($data);
+		return View::make('admin/wirecode-active-history')->with($data);
+	}
+	public function showMemberActiveWire()
+	{
+
+		if (!$this->IsAdminLoggedIn()) {
+			return Redirect::route('admin-logout');
+		}
+
+		$data['Page'] = 'member-active-wire';
+		$data['Token'] = csrf_token();
+		$data = $this->SetAdminInitialData($data);
+
+		return View::make('admin/member-active-wire')->with($data);
+	}
 	//Code Generation ------------------------------------------------
 	public function showCodeGeneration()
 	{
@@ -745,8 +796,8 @@ class AdminController extends Controller
 		foreach ($MemberList as $row) {
 			if ($param["IsWithEwallet"] == 1) {
 				$data = $row->EntryID . '|' . $row->EntryCode . '|' . $row->MemberName . '|' . $row->TelNo . '|' . $row->MobileNo . '|' . $row->EmailAddress . '|' . $row->LeftEntryID . '|' . $row->RightEntryID . '|' . $row->EWalletBalance . '|' . $row->FirstName . '|' . $row->LastName . '|' . $row->MiddleName;
-			} else {
-				$data = $row->EntryID . '|' . $row->EntryCode . '|' . $row->MemberName . '|' . $row->TelNo . '|' . $row->MobileNo . '|' . $row->EmailAddress . '|' . $row->LeftEntryID . '|' . $row->RightEntryID;
+			} else {																																					//6							//7							//8					//9					//10				//11							//12			//13			
+				$data = $row->EntryID . '|' . $row->EntryCode . '|' . $row->MemberName . '|' . $row->TelNo . '|' . $row->MobileNo . '|' . $row->EmailAddress . '|' . $row->LeftEntryID . '|' . $row->RightEntryID . '|' . $row->Address . '|' . $row->CityID . '|' . $row->LastName . '|' . $row->StateProvince . '|' . $row->ZipCode . '|' . $row->CountryID;
 			}
 			array_push($RetVal, $data);
 		}
@@ -856,7 +907,7 @@ class AdminController extends Controller
 			}
 		}
 
-		//Sposnor Information
+		//sponsor Information
 		$data["SponsorEntryID"] = $request['SponsorEntryID'];
 
 		//Parent Information
@@ -905,7 +956,7 @@ class AdminController extends Controller
 			$RetVal['ResponseMessage'] = "Sorry. Code has been used already.";
 		} else if ($data["EntryID"] == "0" && $data["SponsorEntryID"] <= 0) {
 			$RetVal['Response'] = "Failed";
-			$RetVal['ResponseMessage'] = "Please select member entry sposnor.";
+			$RetVal['ResponseMessage'] = "Please select member entry sponsor.";
 		} else if ($data["EntryID"] == "0" && $data["ParentEntryID"] <= 0) {
 			$RetVal['Response'] = "Failed";
 			$RetVal['ResponseMessage'] = "Please select member entry upline.";
@@ -3072,7 +3123,7 @@ class AdminController extends Controller
 		$data["OrderID"] = $Order->doPaidOrder($data);
 
 		$RetVal['Response'] = "Success";
-		$RetVal['ResponseMessage'] = "Order has been cancelled successfully.";
+		$RetVal['ResponseMessage'] = "Order successfully paid.";
 		$RetVal["OrderInfo"] = $Order->getOrderInfo($data["OrderID"]);
 
 		return response()->json($RetVal);
