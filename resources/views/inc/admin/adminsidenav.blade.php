@@ -107,6 +107,7 @@
               @if($IsMemberVouchers)
               <li><a href="{{ route('admin-member-voucher') }}"><i class="fa fa-list"></i> Member Vouchers</a></li>
               @endif
+              <li><a href="{{ route('admin-member-tree') }}"><i class="fa fa-list"></i> Member Tree</a></li>
             </ul>
           </li>
         @endif

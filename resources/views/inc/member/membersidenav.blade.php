@@ -38,7 +38,11 @@
             <i class="fa fa-list"></i> <span>My Genealogy</span>
           </a>
         </li>
-
+        <li>
+          <a href="{{ route('member-tree') }}">
+            <i class="fa fa-list"></i> <span>Member Tree</span>
+          </a>
+        </li>
         <li>
           <a href="{{ route('member-ewallet-ledger') }}">
             <i class="fa fa-list"></i> <span>E-Wallet Ledger</span>
