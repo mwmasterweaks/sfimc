@@ -18,8 +18,16 @@
 				<span class="sr-only">Toggle navigation</span>
 			</a>
 			<div class="navbar-custom-menu" style="padding-right: 30px;">
-				<h4 class="widget-user-desc" style="color:white;">WIRE CODE required this friday(cut-off): <span style="color:red;">
-						{{ $active_wire->wirecode->code }}</span></h4>
+				<h4 class="widget-user-desc" style="color:white;">
+					WIRE CODE required this friday(cut-off): 
+					@if ($active_wire != null)
+						@if ($active_wire->wirecode != null)
+							<span style="color:red;">{{ $active_wire->wirecode->code }}</span>
+						@endif
+					@else
+						<span style="color:red;">No Active Wire</span>
+					@endif
+				</h4>
 			</div>
 		</nav>
 	</header>

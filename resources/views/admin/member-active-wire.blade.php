@@ -5,7 +5,7 @@
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
 		<h1>
-			Wirecode Active History
+			Member Wirecode Active History
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="{{ route('admin-dashboard') }}">Home</a></li>
@@ -44,7 +44,6 @@
 			                  <th>ID</th>
 			                  <th>IBO</th>
 			                  <th>Member Name</th>
-			                  <th>OrderNo</th>
 			                  <th>Active Wire ID</th>
 			                  <th>Wire Code</th>
 			                  <th>Start Date</th>
@@ -165,7 +164,7 @@
 			//console.log(vData);
 			var member = vData.member;
 			var member_entry = member.member_entry;
-			var order = vData.order;
+			//var order = vData.order;
 			var wirecode_active = vData.wirecode_active;
 			var wirecode = wirecode_active.wirecode;
 	    	var tblList = $("#tblList").DataTable();
@@ -174,7 +173,7 @@
 	
 			tdIBO = "<span style='font-weight:normal;'>" + member_entry.EntryCode + "</span>";
 			tdMemberName = "<span style='font-weight:normal;'>" + member.FirstName + " " + member.LastName + "</span>";
-			tdOrder = "<span style='font-weight:normal;'>" + order.OrderNo + "</span>";
+			//tdOrder = "<span style='font-weight:normal;'>" + order.OrderNo + "</span>";
 			tdActiveWireID = "<span style='font-weight:normal;'>" + wirecode_active.id + "</span>";
 			tdWireCode = "<span style='font-weight:normal;'>" + wirecode.code + "</span>";
 
@@ -192,11 +191,11 @@
 			    	curData[0] = tdID;
 			    	curData[1] = tdIBO;
 			    	curData[2] = tdMemberName;
-			    	curData[3] = tdOrder;
-			    	curData[4] = tdActiveWireID;
-			    	curData[5] = tdWireCode;
-			    	curData[6] = tdStartDate;
-			    	curData[7] = tdEndDate;
+			    	//curData[3] = tdOrder;
+			    	curData[3] = tdActiveWireID;
+			    	curData[4] = tdWireCode;
+			    	curData[5] = tdStartDate;
+			    	curData[6] = tdEndDate;
 			    	tblList.row(rowIdx).data(curData).invalidate().draw();
 			    }
 			});
@@ -206,7 +205,7 @@
 						tdID,
 						tdIBO,
 						tdMemberName, 
-						tdOrder,
+						//tdOrder,
 						tdActiveWireID,
 						tdWireCode,
 						tdStartDate,

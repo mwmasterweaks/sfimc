@@ -44,6 +44,18 @@
 						<h4 class="widget-user-desc" style="color:white;">{{ 'Rank Level : '.Session('MEMBER_RANK_LEVEL').' '.Session('MEMBER_RANK') }}</h4>
 					</div>
 					<div class="col-md-5">
+						<h4 class="widget-user-desc" style="color:white;">WIRE Activate: 
+							@if ($active_wire != null)
+								@if ($active_wire->member_activate_wire != null)
+								<span style="color:green;">Yes</span>
+								@else
+									<span style="color:red;">No</span>
+								@endif
+							@else
+								<span style="color:red;">No</span>
+							@endif
+							
+						</h4>
 						<h4 class="widget-user-desc" style="color:white;">WIRE Income Projection: <span style="color:red;">(soon)</span></h4>
 						<h4 class="widget-user-desc" style="color:white;">REBATES Income Projection: <span style="color:red;">(soon)</span></h4>
 					</div>

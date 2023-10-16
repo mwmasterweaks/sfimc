@@ -180,6 +180,14 @@ Route::get('/admin-wirecode', [
     'uses' => 'AdminController@showWireCode',
     'as' => 'admin-wirecode'
 ]);
+Route::get('/admin-wirecode-gen', [
+    'uses' => 'AdminController@showWireCodeGen',
+    'as' => 'admin-wirecode-gen'
+]);
+Route::get('/admin-wirecodeDist', [
+    'uses' => 'AdminController@showWireCodeDist',
+    'as' => 'admin-wirecodeDist'
+]);
 Route::get('/admin-wire-history', [
     'uses' => 'AdminController@showWireHistory',
     'as' => 'admin-wire-history'
@@ -193,13 +201,33 @@ Route::post('/get-wirecode', [
     'uses' => 'WirecodeController@index',
     'as' => 'get-wirecode'
 ]);
+Route::post('/get-wirecode-gen', [
+    'uses' => 'WirecodeController@fetch_wirecode_gen',
+    'as' => 'get-wirecode-gen'
+]);
+Route::post('/get-wirecode-list', [
+    'uses' => 'WirecodeController@fetch_wirecode_list',
+    'as' => 'get-wirecode-list'
+]);
+Route::post('/do-issue-wirecode', [
+    'uses' => 'WirecodeController@issue_wirecode',
+    'as' => 'do-issue-wirecode'
+]);
 Route::post('/do-save-wire', [
     'uses' => 'WirecodeController@store',
     'as' => 'do-save-wire'
 ]);
+Route::post('/do-generate-wire', [
+    'uses' => 'WirecodeController@generate_wire',
+    'as' => 'do-generate-wire'
+]);
 Route::post('/do-update-wire', [
     'uses' => 'WirecodeController@update',
     'as' => 'do-update-wire'
+]);
+Route::post('/do-activate-wire', [
+    'uses' => 'WirecodeController@wirecode_activate',
+    'as' => 'do-activate-wire'
 ]);
 Route::post('/do-search-wire', [
     'uses' => 'WirecodeController@search_data',
@@ -986,6 +1014,11 @@ Route::get('/member-order-history', [
 Route::get('/member-vouchers', [
     'uses' => 'MemberController@showMemberVouchers',
     'as' => 'member-vouchers'
+]);
+
+Route::get('/member-show-wirecode', [
+    'uses' => 'MemberController@showWirecode',
+    'as' => 'member-show-wirecode'
 ]);
 
 Route::get('/member-tree', [

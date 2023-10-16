@@ -18,6 +18,7 @@ use Image;
 use DB;
 use Excel;
 use PDF;
+use Carbon\Carbon;
 
 use App\Models\Admin;
 use App\Models\Misc;
@@ -32,6 +33,7 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderProcess;
 use App\Models\PurchaseReceive;
 use App\Models\Order;
+use App\Models\wirecode_active;
 use App\Models\EWallet;
 use App\Models\EWalletWithdrawal;
 use App\Models\UserAccounts;
@@ -47,6 +49,7 @@ use App\Models\Email;
 class AdminController extends Controller
 {
 
+	private $WirecodeController = "App\Http\Controllers\WirecodeController";
 	public function showAdminLogin()
 	{
 
@@ -311,6 +314,47 @@ class AdminController extends Controller
 		$data["ProductList"] = $Inventory->getInventoryList($param);
 
 		return View::make('admin/wirecode')->with($data);
+	}
+	public function showWireCodeGen()
+	{
+
+		if (!$this->IsAdminLoggedIn()) {
+			return Redirect::route('admin-logout');
+		}
+		$Center = new Center();
+		$data['Page'] = 'wirecodegen';
+		$data['Token'] = csrf_token();
+		$data = $this->SetAdminInitialData($data);
+
+		$param["Status"] = config('app.STATUS_ACTIVE');
+		$param["SearchText"] = "";
+		$param["Limit"] = 0;
+		$param["PageNo"] = 0;
+		$data["CenterList"] = $Center->getCenterList($param);
+		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
+
+
+		return View::make('admin/wirecodegen')->with($data);
+	}
+	public function showWireCodeDist()
+	{
+
+		if (!$this->IsAdminLoggedIn()) {
+			return Redirect::route('admin-logout');
+		}
+		$Center = new Center();
+		$data['Page'] = 'wirecodedist';
+		$data['Token'] = csrf_token();
+		$data = $this->SetAdminInitialData($data);
+
+		$param["Status"] = config('app.STATUS_ACTIVE');
+		$param["SearchText"] = "";
+		$param["Limit"] = 0;
+		$param["PageNo"] = 0;
+		$data["CenterList"] = $Center->getCenterList($param);
+		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
+
+		return View::make('admin/wirecode-distribution')->with($data);
 	}
 	public function showWireHistory()
 	{

@@ -79,6 +79,12 @@
         </li>
 
         <li>
+          <a href="{{ route('member-show-wirecode') }}">
+            <i class="fa fa-list"></i> <span>Wire Code</span>
+          </a>
+        </li>
+
+        <li>
           <a href="{{ route('member-change-password') }}">
             <i class="fa fa-lock"></i>
             <span>Change Password</span>

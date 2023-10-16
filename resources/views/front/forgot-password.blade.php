@@ -67,7 +67,7 @@
                          <span style="--i:1;font-size:28px;color:green">I</span>
                         <span style="--i:2;font-size:25px">N</span>
                         <span style="--i:3;font-size:25px">T</span>
-                        <span style="--i:4;font-size:25px">'L</span>
+                        <span style="--i:4;font-size:25px">L</span>
                        
                     </div>
                     <p>Please click on submit to continue, email address & username required.</p>

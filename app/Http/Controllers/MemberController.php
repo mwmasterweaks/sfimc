@@ -236,12 +236,29 @@ class MemberController extends Controller
 			return Redirect::route('member-logout');
 		}
 
+		$data['Page'] = 'member-upgrade-entry';
+		$data['Token'] = csrf_token();
+		$data = $this->SetMemberInitialData($data);
+		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
+
+		$MemberEntry = new MemberEntry();
+		$data["MemberEntryInfo"] = $MemberEntry->getMemberEntryInfo(Session('MEMBER_ENTRY_ID'));
+
+		return View::make('member/member-vouchers')->with($data);
+	}
+	public function showWirecode()
+	{
+
+		if (!$this->IsMemberLoggedIn()) {
+			return Redirect::route('member-logout');
+		}
+
 		$data['Page'] = 'member-vouchers';
 		$data['Token'] = csrf_token();
 		$data = $this->SetMemberInitialData($data);
 		$data['active_wire'] = app($this->WirecodeController)->get_active_wire();
 
-		return View::make('member/member-vouchers')->with($data);
+		return View::make('member/member-wirecode')->with($data);
 	}
 	public function showMemberOrderHistory()
 	{
@@ -742,17 +759,18 @@ class MemberController extends Controller
 		return 'ok';
 	}
 
-	public function generateWire($date)
+	public function generateWire()
 	{
 
 		//$initialMember = Member::where('MemberID', 2947)->first();
 		//return $this->buildTree(1168, "2023-04-30");
-		$genDate = new Carbon($date);
+		$genDate = new Carbon();
+		$genDate = $genDate->subDays(2);
 		$dateNow = new Carbon();
 
 		$wirecode_active = wirecode_active::with('wirecode')
-			->where("start_date", "<=", $genDate)
-			->where("end_date", ">=", $genDate)
+			->where("start_date", "<=", $genDate->toDateString())
+			->where("end_date", ">=", $genDate->toDateString())
 			->first();
 		$wirecode = $wirecode_active->wirecode;
 
@@ -768,12 +786,17 @@ class MemberController extends Controller
 					$item->memberID
 				)
 				->orderBy('member_tree.depth')
-				->take($maxLevel + 1)
+				->take($maxLevel + 1) //na include iyaha sarili
 				->get();
 			$count = 1;
 			//INSERT INTO `complan` (`ComplanID`, `Complan`, `Description`, `Status`, `DateTimeCreated`, `DateTimeUpdated`) 
 			//VALUES (NULL, 'Wirecode', 'Wirecode', 'Active', '2023-09-26 00:00:00', '2023-09-26 00:00:00');
+			$skipFirst = true;
 			foreach ($ancestor_member_active_wire as $ancestor) {
+				if ($skipFirst) {
+					$skipFirst = false;
+					continue; // Skip the first element
+				}
 
 				$info = DB::table('ewalletledger')
 					->where('MemberID', $ancestor->memberID)
@@ -798,7 +821,7 @@ class MemberController extends Controller
 					'RunningBalance' => ($EWalletBalance + $wirecode->amount_acquired),
 					'Remarks' => 'Wirecode income Level ' . $count . ' for codewire',
 					'Status' => 'Approved',
-					'TransactionRefID' => $member_activate_wire->id,
+					'TransactionRefID' => $item->id,
 					'DateTimeCreated' => $dateNow,
 					'DateTimeUpdated' => $dateNow
 				]);

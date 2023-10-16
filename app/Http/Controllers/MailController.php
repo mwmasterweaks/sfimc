@@ -9,6 +9,10 @@ use Mail;
 use DB;
 use Illuminate\Http\Request;
 
+
+use App\Models\Member;
+use App\Models\MemberEntry;
+
 class MailController extends Controller
 {
     public function doForgetPassword(Request $request)
@@ -17,37 +21,41 @@ class MailController extends Controller
         $Success_Msg = "";
         $Temp_Pass = $this->generateCode(8);
         $data['EmailAddress'] = $request['EmailAddress'];
-        $data['MemberNo'] = $request['MemberNo'];
+        $IBO = $request['MemberNo'];
         // 4e17a448e043206801b95de317e07c839770c8b8
         // briones@gmail.com
-        $Member = DB::table('member')->where('EmailAddress',$data['EmailAddress'])->where('MemberNo',$data['MemberNo'])->first();
-        if($Member)
-        {
-            $email = new ForgotPassword($Temp_Pass,$Member->FirstName);
+
+        $Member = Member::where('EmailAddress', $data['EmailAddress'])
+            ->whereHas('member_entry', function ($query) use ($IBO) {
+                $query->where("EntryCode", $IBO);
+            })
+            ->first();
+
+        if ($Member) {
+            $email = new ForgotPassword($Temp_Pass, $Member->FirstName);
             Mail::to($data['EmailAddress'])->send($email);
 
-            if($email)
-            {
-                DB::table('member')->where('EmailAddress',$data['EmailAddress'])->where('MemberNo',$data['MemberNo'])->update(['Password' =>  sha1(trim($Temp_Pass))]);
+            if ($email) {
+                DB::table('member')->where('MemberID', $Member->MemberID)
+                    ->update(['Password' =>  sha1(trim($Temp_Pass))]);
                 $Success_Msg = 'Password reset instrunction sent to your email';
             }
-            
-        }else{
+        } else {
             $Error_Msg = 'Invalid Email Address or IBO Number';
         }
 
-        if (empty($data['EmailAddress']) && empty($data['MemberNo'])) {
+        if (empty($data['EmailAddress']) && empty($IBO)) {
             $Error_Msg = 'Please enter your Email Address and IBO Number';
-        }else if(empty($data['EmailAddress'])) {
+        } else if (empty($data['EmailAddress'])) {
             $Error_Msg = 'Please enter your Email Address';
-        }else if(empty($data['MemberNo'])) {
+        } else if (empty($IBO)) {
             $Error_Msg = 'Please enter your IBO Number';
         }
 
-        if (!empty($Error_Msg)){
-	        return Redirect::back()->with('Error_Msg',$Error_Msg);
-	    }else{
-            return Redirect::back()->with('Success_Msg',$Success_Msg);
+        if (!empty($Error_Msg)) {
+            return Redirect::back()->with('Error_Msg', $Error_Msg);
+        } else {
+            return Redirect::back()->with('Success_Msg', $Success_Msg);
         }
     }
 

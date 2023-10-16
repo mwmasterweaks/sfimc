@@ -70,8 +70,9 @@
           </li>
         @endif
 
-        @php($wirecode = Session('IS_SUPER_ADMIN')==true ? true : $UserAccountModel->getUserAccountAccess(Session('ADMIN_ACCOUNT_ID'),'Wire Code'))  
-        @if($wirecode)
+        @php($wirecode = Session('IS_SUPER_ADMIN')==true ? true : $UserAccountModel->getUserAccountAccess(Session('ADMIN_ACCOUNT_ID'),'WireCode'))  
+        @php($wirecodeDist = Session('IS_SUPER_ADMIN')==true ? true : $UserAccountModel->getUserAccountAccess(Session('ADMIN_ACCOUNT_ID'),'Code Distribution'))  
+        @if($wirecode || $wirecodeDist)
           <li class="treeview">
             <a href="#">
               <i class="fa fa-list"></i>
@@ -81,9 +82,15 @@
               </span>
             </a>
             <ul class="treeview-menu">
+               @if($wirecode)
               <li><a href="{{ route('admin-wirecode') }}"><i class="fa fa-list"></i> Wire Code </a></li>
+              <li><a href="{{ route('admin-wirecode-gen') }}"><i class="fa fa-list"></i> Wire Code Generation </a></li>
               <li><a href="{{ route('admin-wire-history') }}"><i class="fa fa-list"></i> Wire Active History</a></li>
               <li><a href="{{ route('admin-member-active-wire') }}"><i class="fa fa-list"></i> Members Activate Wire</a></li>
+              @endif
+              @if($wirecodeDist)
+              <li><a href="{{ route('admin-wirecodeDist') }}"><i class="fa fa-list"></i> Wire Code Distribution</a></li>
+               @endif
             </ul>
           </li>
         @endif
