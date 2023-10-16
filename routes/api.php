@@ -18,6 +18,7 @@ Route::get('matching', "AdminController@matching");
 Route::get('generateRabates/{date}', "MemberController@generateRabates");
 Route::get('generateWireCode/{date}', "WirecodeController@generateWireCode");
 Route::get('genMemberTree', "MemberController@genMemberTree");
+Route::get('generateWire', "MemberController@generateWire");
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

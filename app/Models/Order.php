@@ -735,7 +735,7 @@ class Order extends Model
       //if (!($order_data !== null && $order_data->TotalVoucherPayment > 0)) {
       if (!($order_data->TotalVoucherPayment > 0)) {
         //Distribute For Personal And Group Purchases
-        $this->wirecode_checker($OrderID, $order_data->CustomerEntryID);
+        //$this->wirecode_checker($OrderID, $order_data->CustomerEntryID);
         DB::statement("call spSetAccumulatedOrder(" . $OrderID . ",'" . $TODAY . "')");
       }
       //Save Transaction Log
@@ -769,7 +769,7 @@ class Order extends Model
     if (!$orderitems->isEmpty()) {
       $member_activate_wire = new member_activate_wire;
       $member_activate_wire->memberID = $memberID;
-      $member_activate_wire->wirecode_activate_id = $active_wire->id;
+      $member_activate_wire->wirecode_active_id = $active_wire->id;
       $member_activate_wire->orderID = $OrderID;
       //$member_activate_wire->timestamps = false;
       $member_activate_wire->save();
